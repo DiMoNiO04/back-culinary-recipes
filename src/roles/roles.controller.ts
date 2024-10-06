@@ -4,6 +4,8 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Role } from './roles.model';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { Roles } from 'src/auth/roles-auth.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @ApiTags('Роли пользователя')
 @Controller('roles')
@@ -12,6 +14,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Создание роли' })
   @ApiResponse({ status: 201, type: Role })
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateRoleDto) {
@@ -20,6 +24,8 @@ export class RolesController {
 
   @ApiOperation({ summary: 'Получение роли' })
   @ApiResponse({ status: 200, type: Role })
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get('/:value')
   getByValue(@Param('value') value: string) {
