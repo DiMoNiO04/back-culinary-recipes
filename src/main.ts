@@ -6,9 +6,15 @@ async function start() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
 
+  // Включение CORS
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('CULINARY RECIPES')
-    .setDescription('Документация REST API')
+    .setDescription('REST API Documentation')
     .setVersion('1.0.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);

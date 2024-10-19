@@ -7,12 +7,12 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 
-@ApiTags('Пользователи')
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @ApiOperation({ summary: 'Создание пользователя' })
+  @ApiOperation({ summary: 'Create a user' })
   @ApiResponse({ status: 201, type: User })
   @Roles('ADMIN')
   @UseGuards(RolesGuard)
@@ -22,7 +22,7 @@ export class UsersController {
     return this.usersService.createUser(userDto);
   }
 
-  @ApiOperation({ summary: 'Получение всех пользователей' })
+  @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, type: [User] })
   @Roles('ADMIN')
   @UseGuards(RolesGuard)

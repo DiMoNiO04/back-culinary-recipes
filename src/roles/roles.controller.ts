@@ -7,12 +7,12 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 
-@ApiTags('Роли пользователя')
+@ApiTags('User roles')
 @Controller('roles')
 export class RolesController {
   constructor(private roleService: RolesService) {}
 
-  @ApiOperation({ summary: 'Создание роли' })
+  @ApiOperation({ summary: 'Creating a role' })
   @ApiResponse({ status: 201, type: Role })
   @Roles('ADMIN')
   @UseGuards(RolesGuard)
@@ -22,7 +22,7 @@ export class RolesController {
     return this.roleService.createRole(dto);
   }
 
-  @ApiOperation({ summary: 'Получение роли' })
+  @ApiOperation({ summary: 'Getting the role' })
   @ApiResponse({ status: 200, type: Role })
   @Roles('ADMIN')
   @UseGuards(RolesGuard)
