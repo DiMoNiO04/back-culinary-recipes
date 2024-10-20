@@ -6,9 +6,8 @@ async function start() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
 
-  // Включение CORS
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: process.env.CORS_URL,
     credentials: true,
   });
 
