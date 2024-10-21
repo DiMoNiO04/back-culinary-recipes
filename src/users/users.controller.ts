@@ -18,6 +18,29 @@ export class UsersController {
     private jwtService: JwtService
   ) {}
 
+  private getUserIdFromRequest(request: Request): number {
+    const token = request.cookies?.Authentication || request.headers.authorization?.split(' ')[1];
+    const user = this.jwtService.decode(token);
+    return user['id'];
+  }
+
+  @ApiOperation({ summary: 'Get personal user data' })
+  @ApiResponse({ status: 200, type: User })
+  @UseGuards(JwtAuthGuard)
+  @Get('/self/personal-data')
+  async getPersonalData(@Req() request: Request) {
+    const userId = this.getUserIdFromRequest(request);
+    return this.usersService.getUserById(userId);
+  }
+
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, type: [User] })
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  getAll() {
+    return this.usersService.getAllUsers();
+  }
+
   @ApiOperation({ summary: 'Create a user' })
   @ApiResponse({ status: 201, type: User })
   @Roles('ADMIN')
@@ -28,24 +51,12 @@ export class UsersController {
     return this.usersService.createUser(userDto);
   }
 
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, type: [User] })
-  // @Roles('ADMIN')
-  // @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  getAll() {
-    return this.usersService.getAllUsers();
-  }
-
   @ApiOperation({ summary: 'Delete your own account' })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @Delete('/self/delete')
   deleteSelf(@Req() request: Request) {
-    const token = request.cookies?.Authentication || request.headers.authorization?.split(' ')[1];
-    const user = this.jwtService.decode(token);
-    const userId = user['id'];
+    const userId = this.getUserIdFromRequest(request);
     return this.usersService.deleteUser(userId);
   }
 
@@ -54,9 +65,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Patch('/self/change-password')
   async changePassword(@Req() request: Request, @Body() changePasswordDto: ChangePasswordDto) {
-    const token = request.cookies?.Authentication || request.headers.authorization?.split(' ')[1];
-    const user = this.jwtService.decode(token);
-    const userId = user['id'];
+    const userId = this.getUserIdFromRequest(request);
     return this.usersService.changePassword(userId, changePasswordDto);
   }
 }

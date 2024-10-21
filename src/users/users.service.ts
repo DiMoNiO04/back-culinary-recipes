@@ -60,10 +60,20 @@ export class UsersService {
     return { message: 'Password changed successfully' };
   }
 
+  async getUserById(userId: number) {
+    const user = await this.userRepository.findByPk(userId, {
+      include: { all: true },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return user;
+  }
+
   private isSimilar(oldPassword: string, newPassword: string): boolean {
     if (oldPassword === newPassword) return true;
 
-    const similarityThreshold = 0.7;
+    const similarityThreshold = 0.9;
     const longer = oldPassword.length > newPassword.length ? oldPassword : newPassword;
     const shorter = oldPassword.length > newPassword.length ? newPassword : oldPassword;
 
