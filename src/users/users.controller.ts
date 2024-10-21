@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,7 @@ import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -29,8 +30,8 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
+  // @Roles('ADMIN')
+  // @UseGuards(RolesGuard)
   @UseGuards(JwtAuthGuard)
   @Get()
   getAll() {
@@ -40,7 +41,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Delete your own account' })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
-  @Delete('/self')
+  @Delete('/self/delete')
   deleteSelf(@Req() request: Request) {
     const token = request.cookies?.Authentication || request.headers.authorization?.split(' ')[1];
     const user = this.jwtService.decode(token);
@@ -48,13 +49,14 @@ export class UsersController {
     return this.usersService.deleteUser(userId);
   }
 
-  // @ApiOperation({ summary: 'Delete a user by ID' })
-  // @ApiResponse({ status: 200 })
-  // @Roles('ADMIN')
-  // @UseGuards(RolesGuard)
-  // @UseGuards(JwtAuthGuard)
-  // @Delete('/:id')
-  // deleteUser(@Param('id') id: number) {
-  //   return this.usersService.deleteUser(id);
-  // }
+  @ApiOperation({ summary: 'Change user password' })
+  @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
+  @Patch('/self/change-password')
+  async changePassword(@Req() request: Request, @Body() changePasswordDto: ChangePasswordDto) {
+    const token = request.cookies?.Authentication || request.headers.authorization?.split(' ')[1];
+    const user = this.jwtService.decode(token);
+    const userId = user['id'];
+    return this.usersService.changePassword(userId, changePasswordDto);
+  }
 }
