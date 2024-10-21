@@ -11,6 +11,16 @@ export class UsersService {
     private roleService: RolesService
   ) {}
 
+  async deleteUser(id: number): Promise<{ message: string }> {
+    const user = await this.userRepository.findByPk(id);
+    if (user) {
+      await user.destroy();
+      return { message: 'Account deleted!' };
+    } else {
+      return { message: 'Account not deleted!' };
+    }
+  }
+
   async createUser(dto: CreateUserDto) {
     const user = await this.userRepository.create(dto);
     const role = await this.roleService.getRoleByValue('USER');
