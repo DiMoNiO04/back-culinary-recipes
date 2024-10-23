@@ -9,6 +9,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -72,5 +73,14 @@ export class UsersController {
   async changePassword(@Req() request: Request, @Body() changePasswordDto: ChangePasswordDto) {
     const userId = this.getUserIdFromRequest(request);
     return this.usersService.changePassword(userId, changePasswordDto);
+  }
+
+  @ApiOperation({ summary: 'Update profile' })
+  @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
+  @Patch('/self/update-profile')
+  async updateNameAndSurname(@Req() request: Request, @Body() updateUserDto: UpdateUserDto) {
+    const userId = this.getUserIdFromRequest(request);
+    return this.usersService.updateProfile(userId, updateUserDto);
   }
 }

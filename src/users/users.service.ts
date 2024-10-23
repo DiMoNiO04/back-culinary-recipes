@@ -5,6 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'src/roles/roles.service';
 import * as bcrypt from 'bcryptjs';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +38,21 @@ export class UsersService {
 
   async getUsersByEmail(email: string) {
     return await this.userRepository.findOne({ where: { email }, include: { all: true } });
+  }
+
+  async updateProfile(userId: number, updateUserDto: UpdateUserDto): Promise<{ message: string }> {
+    const user = await this.userRepository.findByPk(userId);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    user.firstName = updateUserDto.firstName;
+    user.lastName = updateUserDto.lastName;
+
+    await user.save();
+
+    return { message: 'User data updated successfully' };
   }
 
   async changePassword(userId: number, changePasswordDto: ChangePasswordDto): Promise<{ message: string }> {
