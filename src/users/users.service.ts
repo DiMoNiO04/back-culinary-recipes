@@ -62,6 +62,7 @@ export class UsersService {
 
   async getUserById(userId: number) {
     const user = await this.userRepository.findByPk(userId, {
+      attributes: { exclude: ['password'] },
       include: { all: true },
     });
     if (!user) {

@@ -30,7 +30,12 @@ export class UsersController {
   @Get('/self/personal-data')
   async getPersonalData(@Req() request: Request) {
     const userId = this.getUserIdFromRequest(request);
-    return this.usersService.getUserById(userId);
+    const user = await this.usersService.getUserById(userId);
+
+    return {
+      message: 'Success',
+      data: user,
+    };
   }
 
   @ApiOperation({ summary: 'Get all users' })
