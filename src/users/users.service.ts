@@ -47,8 +47,8 @@ export class UsersService {
       throw new UnauthorizedException('User not found');
     }
 
-    user.firstName = updateUserDto.firstName;
-    user.lastName = updateUserDto.lastName;
+    if (updateUserDto.firstName) user.firstName = updateUserDto.firstName;
+    if (updateUserDto.lastName) user.lastName = updateUserDto.lastName;
 
     await user.save();
 

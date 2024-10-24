@@ -8,11 +8,11 @@ export class Category extends Model<Category> {
   @Column({ type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true })
   id: number;
 
-  @ApiProperty({ example: 'Салаты', description: 'Category name' })
+  @ApiProperty({ example: 'Salad', description: 'Category name' })
   @Column({ type: DataType.STRING, allowNull: false })
   name: string;
 
-  @ApiProperty({ example: 'Описание категории', description: 'Category description' })
+  @ApiProperty({ example: 'Category description', description: 'Category description' })
   @Column({ type: DataType.STRING, allowNull: true })
   description: string;
 

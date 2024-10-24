@@ -25,11 +25,6 @@ export class Recipe extends Model<Recipe> {
   @Column({ type: DataType.INTEGER, allowNull: false })
   cookingTime: number;
 
-  @ForeignKey(() => User)
-  @ApiProperty({ example: '1', description: 'Author (user id)' })
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  authorId: number;
-
   @ApiProperty({ example: '400', description: 'Calories' })
   @Column({ type: DataType.INTEGER, allowNull: false })
   calories: number;
@@ -53,4 +48,12 @@ export class Recipe extends Model<Recipe> {
 
   @BelongsTo(() => Category)
   category: Category;
+
+  @ForeignKey(() => User)
+  @ApiProperty({ example: '1', description: 'Author (user id)' })
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  authorId: number;
+
+  @BelongsTo(() => User)
+  author: User;
 }
