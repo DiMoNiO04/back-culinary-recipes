@@ -18,8 +18,8 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  private async validateUser(userDto: CreateUserDto | AuthUserDto): Promise<User> {
-    const user = await this.userService.getUsersByEmail(userDto.email);
+  private async validateUser(userDto: CreateUserDto | AuthUserDto): Promise<{ message: string; user: User }> {
+    const { user } = await this.userService.getUsersByEmail(userDto.email);
 
     if (!user) {
       throw new UnauthorizedException({ message: 'Incorrect email or password!' });
@@ -28,14 +28,14 @@ export class AuthService {
     const passwordEquals = await bcrypt.compare(userDto.password, user.password);
 
     if (user && passwordEquals) {
-      return user;
+      return { message: 'User validated successfully!', user };
     }
 
     throw new UnauthorizedException({ message: 'Incorrect email or password!' });
   }
 
   async login(userDto: AuthUserDto): Promise<{ token: string; message: string }> {
-    const user = await this.validateUser(userDto);
+    const { user } = await this.validateUser(userDto);
     const token = await this.generateToken(user);
     return {
       token,
@@ -45,11 +45,11 @@ export class AuthService {
 
   async registration(userDto: CreateUserDto): Promise<{ message: string }> {
     const candidate = await this.userService.getUsersByEmail(userDto.email);
-    if (candidate) {
+    if (candidate.user) {
       throw new HttpException('A user with this email exists', HttpStatus.BAD_REQUEST);
     }
     const hashPassword = await bcrypt.hash(userDto.password, 5);
-    const user = await this.userService.createUser({ ...userDto, password: hashPassword });
+    await this.userService.createUser({ ...userDto, password: hashPassword });
     return {
       message: 'Registration successful! Log in',
     };

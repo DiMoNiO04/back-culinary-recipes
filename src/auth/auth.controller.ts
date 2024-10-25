@@ -11,16 +11,18 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @ApiOperation({ summary: 'Authorization' })
-  @ApiResponse({ status: 200, type: [User] })
+  @ApiResponse({ status: 200, type: User })
   @Post('/login')
-  login(@Body() userDto: AuthUserDto) {
-    return this.authService.login(userDto);
+  async login(@Body() userDto: AuthUserDto) {
+    const result = await this.authService.login(userDto);
+    return { message: result.message, token: result.token };
   }
 
   @ApiOperation({ summary: 'Registration' })
-  @ApiResponse({ status: 201, type: [User] })
+  @ApiResponse({ status: 201 })
   @Post('/registration')
-  registration(@Body() userDto: CreateUserDto) {
-    return this.authService.registration(userDto);
+  async registration(@Body() userDto: CreateUserDto) {
+    const result = await this.authService.registration(userDto);
+    return { message: result.message };
   }
 }

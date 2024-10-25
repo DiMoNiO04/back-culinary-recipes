@@ -7,7 +7,7 @@ export class CreateCategoryDto {
   @ApiProperty({ example: 'Description', description: 'Category description' })
   readonly description: string;
 
-  @ApiProperty({ example: 'image.png', description: 'Category image' })
+  @ApiProperty({ example: 'data:image/png;base64,iVBORw0K...', description: 'Category image in base64 format' })
   readonly image: string;
 
   @ApiProperty({ example: '0', description: 'Initial count of recipes' })

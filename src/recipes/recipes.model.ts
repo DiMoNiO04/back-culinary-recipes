@@ -3,8 +3,17 @@ import { Column, DataType, ForeignKey, Model, Table, BelongsTo } from 'sequelize
 import { User } from 'src/users/users.model';
 import { Category } from 'src/categories/categories.model';
 
+interface RecipeCreationAttrs {
+  title: string;
+  cookingTime: number;
+  calories: number;
+  ingredients: string;
+  instructions: string;
+  categoryId: number;
+}
+
 @Table({ tableName: 'recipes' })
-export class Recipe extends Model<Recipe> {
+export class Recipe extends Model<Recipe, RecipeCreationAttrs> {
   @ApiProperty({ example: '1', description: 'Unique identifier' })
   @Column({ type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true })
   id: number;
@@ -16,10 +25,6 @@ export class Recipe extends Model<Recipe> {
   @ApiProperty({ example: 'Short description', description: 'Short description' })
   @Column({ type: DataType.STRING, allowNull: true })
   shortDescription: string;
-
-  @ApiProperty({ example: '2024-10-24', description: 'Date added' })
-  @Column({ type: DataType.DATE, allowNull: false })
-  addedDate: Date;
 
   @ApiProperty({ example: '30', description: 'Cooking time in minutes' })
   @Column({ type: DataType.INTEGER, allowNull: false })
@@ -51,7 +56,7 @@ export class Recipe extends Model<Recipe> {
 
   @ForeignKey(() => User)
   @ApiProperty({ example: '1', description: 'Author (user id)' })
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER, allowNull: true })
   authorId: number;
 
   @BelongsTo(() => User)

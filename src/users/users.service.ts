@@ -19,30 +19,30 @@ export class UsersService {
     if (user) {
       await user.destroy();
       return { message: 'Account deleted!' };
-    } else {
-      return { message: 'Account not deleted!' };
     }
+    return { message: 'Account not found, deletion failed!' };
   }
 
-  async createUser(dto: CreateUserDto) {
+  async createUser(dto: CreateUserDto): Promise<{ message: string; user: User }> {
     const user = await this.userRepository.create(dto);
-    const role = await this.roleService.getRoleByValue('USER');
+    const { role } = await this.roleService.getRoleByValue('USER');
     await user.$set('roles', [role.id]);
     user.roles = [role];
-    return user;
+    return { message: 'User created successfully!', user };
   }
 
-  async getAllUsers() {
-    return await this.userRepository.findAll({ include: { all: true } });
+  async getAllUsers(): Promise<{ message: string; users: User[] }> {
+    const users = await this.userRepository.findAll({ include: { all: true } });
+    return { message: 'Users retrieved successfully!', users };
   }
 
-  async getUsersByEmail(email: string) {
-    return await this.userRepository.findOne({ where: { email }, include: { all: true } });
+  async getUsersByEmail(email: string): Promise<{ message: string; user: User | null }> {
+    const user = await this.userRepository.findOne({ where: { email }, include: { all: true } });
+    return { message: user ? 'User found!' : 'User not found!', user };
   }
 
   async updateProfile(userId: number, updateUserDto: UpdateUserDto): Promise<{ message: string }> {
     const user = await this.userRepository.findByPk(userId);
-
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -51,12 +51,15 @@ export class UsersService {
     if (updateUserDto.lastName) user.lastName = updateUserDto.lastName;
 
     await user.save();
-
     return { message: 'User data updated successfully' };
   }
 
   async changePassword(userId: number, changePasswordDto: ChangePasswordDto): Promise<{ message: string }> {
     const user = await this.userRepository.findByPk(userId);
+    console.log(changePasswordDto.confirmPassword);
+    console.log(changePasswordDto.currentPassword);
+    console.log(changePasswordDto.newPassword);
+
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -70,13 +73,12 @@ export class UsersService {
       throw new UnauthorizedException('New password cannot be the same or similar to the old password');
     }
 
-    const hashedPassword = await bcrypt.hash(changePasswordDto.newPassword, 10);
-    user.password = hashedPassword;
+    user.password = await bcrypt.hash(changePasswordDto.newPassword, 10);
     await user.save();
     return { message: 'Password changed successfully' };
   }
 
-  async getUserById(userId: number) {
+  async getUserById(userId: number): Promise<{ message: string; user: User }> {
     const user = await this.userRepository.findByPk(userId, {
       attributes: { exclude: ['password'] },
       include: { all: true },
@@ -84,7 +86,7 @@ export class UsersService {
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
-    return user;
+    return { message: 'User retrieved successfully!', user };
   }
 
   private isSimilar(oldPassword: string, newPassword: string): boolean {
@@ -94,8 +96,6 @@ export class UsersService {
     const longer = oldPassword.length > newPassword.length ? oldPassword : newPassword;
     const shorter = oldPassword.length > newPassword.length ? newPassword : oldPassword;
 
-    if (longer.includes(shorter)) return true;
-
-    return false;
+    return longer.includes(shorter);
   }
 }

@@ -1,10 +1,9 @@
-import { Body, Controller, Get, Post, Patch, Delete, Param, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Delete, Param } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { Category } from './categories.model';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Recipe } from 'src/recipes/recipes.model';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @ApiTags('Categories')
@@ -15,10 +14,8 @@ export class CategoriesController {
   @ApiOperation({ summary: 'Create category' })
   @ApiResponse({ status: 201, type: Category })
   @Post('/create')
-  @UseInterceptors(FileInterceptor('image'))
-  async create(@Body() createCategoryDto: CreateCategoryDto, @UploadedFile() image) {
-    const imageData = image?.buffer.toString('base64');
-    return this.categoriesService.createCategory(createCategoryDto, imageData);
+  async create(@Body() createCategoryDto: CreateCategoryDto) {
+    return this.categoriesService.createCategory(createCategoryDto);
   }
 
   @ApiOperation({ summary: 'Get all categories' })
@@ -45,10 +42,8 @@ export class CategoriesController {
   @ApiOperation({ summary: 'Update category by ID' })
   @ApiResponse({ status: 200, type: Category })
   @Patch('/update/:id')
-  @UseInterceptors(FileInterceptor('image'))
-  async update(@Param('id') id: number, @Body() updateCategoryDto: UpdateCategoryDto, @UploadedFile() image) {
-    const imageData = image?.buffer.toString('base64');
-    return this.categoriesService.updateCategory(id, updateCategoryDto, imageData);
+  async update(@Param('id') id: number, @Body() updateCategoryDto: UpdateCategoryDto) {
+    return this.categoriesService.updateCategory(id, updateCategoryDto);
   }
 
   @ApiOperation({ summary: 'Delete category by ID' })

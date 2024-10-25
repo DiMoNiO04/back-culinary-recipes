@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Req, UseGuards, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -31,10 +31,10 @@ export class UsersController {
   @Get('/self/personal-data')
   async getPersonalData(@Req() request: Request) {
     const userId = this.getUserIdFromRequest(request);
-    const user = await this.usersService.getUserById(userId);
+    const { message, user } = await this.usersService.getUserById(userId);
 
     return {
-      message: 'Success',
+      message,
       data: user,
     };
   }
@@ -43,27 +43,29 @@ export class UsersController {
   @ApiResponse({ status: 200, type: [User] })
   @UseGuards(JwtAuthGuard)
   @Get()
-  getAll() {
-    return this.usersService.getAllUsers();
+  async getAll() {
+    const { message, users } = await this.usersService.getAllUsers();
+    return { message, data: users };
   }
 
   @ApiOperation({ summary: 'Create a user' })
   @ApiResponse({ status: 201, type: User })
   @Roles('ADMIN')
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Post()
-  create(@Body() userDto: CreateUserDto) {
-    return this.usersService.createUser(userDto);
+  async create(@Body() userDto: CreateUserDto) {
+    const { message, user } = await this.usersService.createUser(userDto);
+    return { message, data: user };
   }
 
   @ApiOperation({ summary: 'Delete your own account' })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
   @Delete('/self/delete')
-  deleteSelf(@Req() request: Request) {
+  async deleteSelf(@Req() request: Request) {
     const userId = this.getUserIdFromRequest(request);
-    return this.usersService.deleteUser(userId);
+    const { message } = await this.usersService.deleteUser(userId);
+    return { message };
   }
 
   @ApiOperation({ summary: 'Change user password' })
@@ -72,7 +74,8 @@ export class UsersController {
   @Patch('/self/change-password')
   async changePassword(@Req() request: Request, @Body() changePasswordDto: ChangePasswordDto) {
     const userId = this.getUserIdFromRequest(request);
-    return this.usersService.changePassword(userId, changePasswordDto);
+    const { message } = await this.usersService.changePassword(userId, changePasswordDto);
+    return { message };
   }
 
   @ApiOperation({ summary: 'Update profile' })
@@ -81,6 +84,7 @@ export class UsersController {
   @Patch('/self/update-profile')
   async updateNameAndSurname(@Req() request: Request, @Body() updateUserDto: UpdateUserDto) {
     const userId = this.getUserIdFromRequest(request);
-    return this.usersService.updateProfile(userId, updateUserDto);
+    const { message } = await this.usersService.updateProfile(userId, updateUserDto);
+    return { message };
   }
 }

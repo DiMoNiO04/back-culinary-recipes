@@ -4,11 +4,8 @@ export class CreateRecipeDto {
   @ApiProperty({ example: 'Zesar', description: 'Recipe name' })
   readonly title: string;
 
-  @ApiProperty({ example: 'Delicious salat', description: 'Short description' })
+  @ApiProperty({ example: 'Delicious salad', description: 'Short description' })
   readonly shortDescription: string;
-
-  @ApiProperty({ example: '2024-10-24', description: 'Date added' })
-  readonly addedDate: Date;
 
   @ApiProperty({ example: '30', description: 'Cooking time in minutes' })
   readonly cookingTime: number;
@@ -27,7 +24,4 @@ export class CreateRecipeDto {
 
   @ApiProperty({ example: '1', description: 'Category id' })
   readonly categoryId: number;
-
-  @ApiProperty({ example: '1', description: 'Author id' })
-  readonly authorId: number;
 }

@@ -7,7 +7,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Roles } from 'src/auth/roles-auth.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 
-@ApiTags('User roles')
+@ApiTags('User Roles')
 @Controller('roles')
 export class RolesController {
   constructor(private roleService: RolesService) {}
@@ -15,8 +15,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Creating a role' })
   @ApiResponse({ status: 201, type: Role })
   @Roles('ADMIN')
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateRoleDto) {
     return this.roleService.createRole(dto);
@@ -25,8 +24,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Getting the role' })
   @ApiResponse({ status: 200, type: Role })
   @Roles('ADMIN')
-  @UseGuards(RolesGuard)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Get('/:value')
   getByValue(@Param('value') value: string) {
     return this.roleService.getRoleByValue(value);

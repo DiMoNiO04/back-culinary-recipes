@@ -8,10 +8,15 @@ export class RolesService {
   constructor(@InjectModel(Role) private roleRepository: typeof Role) {}
 
   async createRole(dto: CreateRoleDto) {
-    return await this.roleRepository.create(dto);
+    const role = await this.roleRepository.create(dto);
+    return { message: 'Role successfully created', role };
   }
 
   async getRoleByValue(value: string) {
-    return await this.roleRepository.findOne({ where: { value } });
+    const role = await this.roleRepository.findOne({ where: { value } });
+    if (!role) {
+      return { message: 'Role not found' };
+    }
+    return { message: 'Role successfully retrieved', role };
   }
 }

@@ -2,32 +2,29 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateRecipeDto {
   @ApiProperty({ example: 'Zesar', description: 'Recipe name', required: false })
-  readonly title?: string;
+  readonly title: string;
 
   @ApiProperty({ example: 'Delicious zesar', description: 'Short description', required: false })
-  readonly shortDescription?: string;
-
-  @ApiProperty({ example: '2024-10-24', description: 'Date added', required: false })
-  readonly addedDate?: Date;
+  readonly shortDescription: string;
 
   @ApiProperty({ example: '30', description: 'Cooking time in minutes', required: false })
-  readonly cookingTime?: number;
+  readonly cookingTime: number;
 
   @ApiProperty({ example: '400', description: 'Calories', required: false })
-  readonly calories?: number;
+  readonly calories: number;
 
   @ApiProperty({ example: 'image.png', description: 'Recipe image', required: false })
-  readonly image?: string;
+  readonly image: string;
 
   @ApiProperty({ example: 'Potatp', description: 'Ingredients', required: false })
-  readonly ingredients?: string;
+  readonly ingredients: string;
 
   @ApiProperty({ example: '1. Buy potato', description: 'Instructions', required: false })
-  readonly instructions?: string;
+  readonly instructions: string;
 
   @ApiProperty({ example: '1', description: 'Category id', required: false })
-  readonly categoryId?: number;
+  readonly categoryId: number;
 
   @ApiProperty({ example: '1', description: 'Author id', required: false })
-  readonly authorId?: number;
+  readonly authorId: number;
 }
