@@ -4,7 +4,6 @@ import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { Request } from 'express';
 
 @ApiTags('Recipes')

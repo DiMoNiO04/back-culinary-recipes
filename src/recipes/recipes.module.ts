@@ -5,10 +5,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Recipe } from './recipes.model';
 import { Category } from 'src/categories/categories.model';
 import { UsersModule } from 'src/users/users.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Recipe, Category]), UsersModule, JwtModule],
+  imports: [SequelizeModule.forFeature([Recipe, Category]), UsersModule],
   controllers: [RecipesController],
   providers: [RecipesService],
   exports: [SequelizeModule],

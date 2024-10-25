@@ -10,7 +10,6 @@ import { User } from '../users/users.model';
 export class RecipesService {
   constructor(
     @InjectModel(Recipe) private recipeRepository: typeof Recipe,
-    @InjectModel(Category) private categoryRepository: typeof Category,
     @InjectModel(User) private userRepository: typeof User
   ) {}
 
