@@ -30,7 +30,7 @@ export class Recipe extends Model<Recipe> {
   calories: number;
 
   @ApiProperty({ example: 'image.png', description: 'Recipe image' })
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column({ type: DataType.TEXT, allowNull: true })
   image: string;
 
   @ApiProperty({ example: 'Ingredients', description: 'Ingredients' })

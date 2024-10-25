@@ -4,13 +4,22 @@ import { Category } from './categories.model';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Recipe } from 'src/recipes/recipes.model';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class CategoriesService {
-  constructor(@InjectModel(Category) private categoryRepository: typeof Category) {}
+  constructor(
+    @InjectModel(Category) private categoryRepository: typeof Category,
+    private fileService: FilesService
+  ) {}
 
-  async createCategory(dto: CreateCategoryDto): Promise<Category> {
-    return await this.categoryRepository.create(dto);
+  private async handleImage(image: string): Promise<string | null> {
+    return image ? await this.fileService.createFile(image) : null;
+  }
+
+  async createCategory(dto: CreateCategoryDto, image: string): Promise<Category> {
+    const fileName = await this.handleImage(image);
+    return await this.categoryRepository.create({ ...dto, image: fileName });
   }
 
   async getAllCategories(): Promise<Category[]> {
@@ -25,14 +34,22 @@ export class CategoriesService {
     return category;
   }
 
-  async updateCategory(id: number, dto: UpdateCategoryDto): Promise<Category> {
+  async updateCategory(id: number, dto: UpdateCategoryDto, image?: string): Promise<Category> {
     const category = await this.getCategoryById(id);
-    return await category.update(dto);
+    const fileName = await this.handleImage(image);
+
+    return await category.update({ ...dto, image: fileName });
   }
 
-  async deleteCategory(id: number): Promise<void> {
+  async deleteCategory(id: number): Promise<{ message: string }> {
     const category = await this.getCategoryById(id);
-    await category.destroy();
+
+    if (category) {
+      await category.destroy();
+      return { message: 'Category deleted!' };
+    } else {
+      return { message: 'Category not deleted!' };
+    }
   }
 
   async getCategoryRecipes(id: number): Promise<Recipe[]> {

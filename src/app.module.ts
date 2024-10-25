@@ -11,10 +11,12 @@ import { Category } from './categories/categories.model';
 import { Recipe } from './recipes/recipes.model';
 import { CategoriesModule } from './categories/categories.module';
 import { RecipesModule } from './recipes/recipes.module';
+import { FilesService } from './files/files.service';
+import { FilesModule } from './files/files.module';
 
 @Module({
   controllers: [],
-  providers: [],
+  providers: [FilesService],
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
@@ -34,6 +36,7 @@ import { RecipesModule } from './recipes/recipes.module';
     AuthModule,
     CategoriesModule,
     RecipesModule,
+    FilesModule,
   ],
 })
 export class AppModule {}
