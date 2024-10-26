@@ -12,4 +12,7 @@ export class CreateUserDto {
 
   @ApiProperty({ example: '123456', description: 'User password' })
   readonly password: string;
+
+  @ApiProperty({ example: '0', description: 'Initial count of recipes' })
+  readonly countrecipes?: number;
 }

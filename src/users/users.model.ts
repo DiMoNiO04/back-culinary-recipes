@@ -40,6 +40,10 @@ export class User extends Model<User, UserCreationAttrs> {
   @Column({ type: DataType.STRING, allowNull: true })
   banReason: string;
 
+  @ApiProperty({ example: '5', description: 'Count of recipes in this category' })
+  @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
+  countrecipes: number;
+
   @BelongsToMany(() => Role, () => UserRoles)
   roles: Role[];
 }

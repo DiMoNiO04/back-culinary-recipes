@@ -28,7 +28,7 @@ export class Category extends Model<Category, CategoryCreationAttrs> {
 
   @ApiProperty({ example: '5', description: 'Count of recipes in this category' })
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
-  count: number;
+  countrecipes: number;
 
   @HasMany(() => Recipe)
   recipes: Recipe[];

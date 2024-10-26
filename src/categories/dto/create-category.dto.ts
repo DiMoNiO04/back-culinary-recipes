@@ -11,5 +11,5 @@ export class CreateCategoryDto {
   readonly image: string;
 
   @ApiProperty({ example: '0', description: 'Initial count of recipes' })
-  readonly count?: number;
+  readonly countrecipes?: number;
 }
