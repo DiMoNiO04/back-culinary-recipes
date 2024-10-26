@@ -6,11 +6,11 @@ import { Recipe } from './recipes.model';
 import { Category } from 'src/categories/categories.model';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
+import { FavoritesModule } from '../favorites/favorites.module';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Recipe, Category]), UsersModule, JwtModule],
+  imports: [SequelizeModule.forFeature([Recipe, Category]), UsersModule, JwtModule, FavoritesModule],
   controllers: [RecipesController],
   providers: [RecipesService],
-  exports: [SequelizeModule],
 })
 export class RecipesModule {}

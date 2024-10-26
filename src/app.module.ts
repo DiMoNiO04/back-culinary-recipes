@@ -11,6 +11,8 @@ import { Category } from './categories/categories.model';
 import { Recipe } from './recipes/recipes.model';
 import { CategoriesModule } from './categories/categories.module';
 import { RecipesModule } from './recipes/recipes.module';
+import { FavoritesModule } from './favorites/favorites.module';
+import { Favorite } from './favorites/favorites.model';
 
 @Module({
   controllers: [],
@@ -25,7 +27,7 @@ import { RecipesModule } from './recipes/recipes.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Role, UserRoles, Category, Recipe],
+      models: [User, Role, UserRoles, Category, Recipe, Favorite],
       autoLoadModels: true,
     }),
     UsersModule,
@@ -33,6 +35,7 @@ import { RecipesModule } from './recipes/recipes.module';
     AuthModule,
     CategoriesModule,
     RecipesModule,
+    FavoritesModule,
   ],
 })
 export class AppModule {}
