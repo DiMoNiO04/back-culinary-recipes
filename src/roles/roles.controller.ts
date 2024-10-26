@@ -15,7 +15,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Creating a role' })
   @ApiResponse({ status: 201, type: Role })
   @Roles('ADMIN')
-  // @UseGuards(RolesGuard, JwtAuthGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Post()
   create(@Body() dto: CreateRoleDto) {
     return this.roleService.createRole(dto);
@@ -24,7 +24,7 @@ export class RolesController {
   @ApiOperation({ summary: 'Getting the role' })
   @ApiResponse({ status: 200, type: Role })
   @Roles('ADMIN')
-  // @UseGuards(RolesGuard, JwtAuthGuard)
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Get('/:value')
   getByValue(@Param('value') value: string) {
     return this.roleService.getRoleByValue(value);

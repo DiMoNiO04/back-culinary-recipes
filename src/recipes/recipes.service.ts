@@ -20,7 +20,12 @@ export class RecipesService {
   }
 
   private async validateRecipe(id: number): Promise<Recipe> {
-    const recipe = await this.recipeRepository.findByPk(id, { include: [Category, User] });
+    const recipe = await this.recipeRepository.findByPk(id, {
+      include: [
+        { model: Category, attributes: ['id', 'name', 'description', 'image'] },
+        { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
+      ],
+    });
     if (!recipe) throw new NotFoundException(`Recipe with id ${id} not found`);
     return recipe;
   }
@@ -33,7 +38,12 @@ export class RecipesService {
   }
 
   async getAllRecipes(): Promise<{ message: string; data: Recipe[] }> {
-    const recipes = await this.recipeRepository.findAll({ include: [Category, User] });
+    const recipes = await this.recipeRepository.findAll({
+      include: [
+        { model: Category, attributes: ['id', 'name', 'description', 'image'] },
+        { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
+      ],
+    });
     return { message: 'All recipes retrieved successfully', data: recipes };
   }
 
@@ -46,7 +56,10 @@ export class RecipesService {
     await this.validateUser(userId);
     const recipes = await this.recipeRepository.findAll({
       where: { authorId: userId },
-      include: [Category, User],
+      include: [
+        { model: Category, attributes: ['id', 'name', 'description', 'image'] },
+        { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
+      ],
     });
     return { message: `Recipes for user with id ${userId} retrieved successfully`, data: recipes };
   }

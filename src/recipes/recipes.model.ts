@@ -10,6 +10,7 @@ interface RecipeCreationAttrs {
   ingredients: string;
   instructions: string;
   categoryId: number;
+  authorId: number;
 }
 
 @Table({ tableName: 'recipes' })

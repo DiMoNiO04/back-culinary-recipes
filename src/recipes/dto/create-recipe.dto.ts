@@ -24,4 +24,7 @@ export class CreateRecipeDto {
 
   @ApiProperty({ example: '1', description: 'Category id' })
   readonly categoryId: number;
+
+  @ApiProperty({ example: '1', description: 'Author id' })
+  readonly authorId: number;
 }

@@ -6,6 +6,9 @@ import { RolesService } from 'src/roles/roles.service';
 import * as bcrypt from 'bcryptjs';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Role } from 'src/roles/roles.model';
+import { Recipe } from 'src/recipes/recipes.model';
+import { Category } from 'src/categories/categories.model';
 
 @Injectable()
 export class UsersService {
@@ -81,11 +84,41 @@ export class UsersService {
   async getUserById(userId: number): Promise<{ message: string; user: User }> {
     const user = await this.userRepository.findByPk(userId, {
       attributes: { exclude: ['password'] },
-      include: { all: true },
+      include: [
+        {
+          model: Role,
+          attributes: ['id', 'value', 'description'],
+          through: { attributes: [] },
+        },
+        {
+          model: Recipe,
+          attributes: [
+            'id',
+            'title',
+            'shortDescription',
+            'cookingTime',
+            'calories',
+            'image',
+            'ingredients',
+            'instructions',
+            'categoryId',
+            'createdAt',
+            'updatedAt',
+          ],
+          include: [
+            {
+              model: Category,
+              attributes: ['id', 'name', 'description', 'image'],
+            },
+          ],
+        },
+      ],
     });
+
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
+
     return { message: 'User retrieved successfully!', user };
   }
 
