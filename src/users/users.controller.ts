@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post, Req, UseGuards, Patch, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Req, UseGuards, Patch } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -10,7 +10,6 @@ import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { BannedUserDto } from './dto/users-banned.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -34,25 +33,6 @@ export class UsersController {
   async create(@Body() userDto: CreateUserDto) {
     const { message, user } = await this.usersService.createUser(userDto);
     return { message, data: user };
-  }
-
-  @ApiOperation({ summary: 'Ban a user' })
-  @ApiResponse({ status: 200 })
-  // @Roles('ADMIN')
-  // @UseGuards(RolesGuard, JwtAuthGuard)
-  @Post('/ban')
-  async blockUser(@Body() blockUserDto: BannedUserDto) {
-    const { userId, reason } = blockUserDto;
-    return await this.usersService.blockUser(userId, reason);
-  }
-
-  @ApiOperation({ summary: 'Unban a user' })
-  @ApiResponse({ status: 200 })
-  // @Roles('ADMIN')
-  // @UseGuards(RolesGuard, JwtAuthGuard)
-  @Post('/unban:userId')
-  async unblockUser(@Param('userId') userId: number) {
-    return await this.usersService.unblockUser(userId);
   }
 
   @ApiOperation({ summary: 'Get personal user data' })

@@ -13,6 +13,8 @@ import { CategoriesModule } from './categories/categories.module';
 import { RecipesModule } from './recipes/recipes.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { Favorite } from './favorites/favorites.model';
+import { BannedUsersModule } from './bannedUsers/banned-users.module';
+import { BannedUsers } from './bannedUsers/banned-users.model';
 
 @Module({
   controllers: [],
@@ -27,11 +29,12 @@ import { Favorite } from './favorites/favorites.model';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [User, Role, UserRoles, Category, Recipe, Favorite],
+      models: [User, Role, UserRoles, BannedUsers, Category, Recipe, Favorite],
       autoLoadModels: true,
     }),
     UsersModule,
     RolesModule,
+    BannedUsersModule,
     AuthModule,
     CategoriesModule,
     RecipesModule,

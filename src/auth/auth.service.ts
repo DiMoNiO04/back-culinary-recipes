@@ -5,12 +5,14 @@ import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { User } from 'src/users/users.model';
 import { AuthUserDto } from 'src/users/dto/auth-user.dto';
+import { BannedUsersService } from 'src/bannedUsers/banned-users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private bannedUsersService: BannedUsersService
   ) {}
 
   private async generateToken(user: User): Promise<string> {
@@ -35,8 +37,8 @@ export class AuthService {
   }
 
   async login(userDto: AuthUserDto): Promise<{ token: string; message: string }> {
-    if (await this.userService.isUserBlocked(userDto.email)) {
-      throw new UnauthorizedException({ message: 'Your account is blocked.' });
+    if (await this.bannedUsersService.isUserBanned(userDto.email)) {
+      throw new UnauthorizedException({ message: 'Your account is banned!' });
     }
     const { user } = await this.validateUser(userDto);
     const token = await this.generateToken(user);
@@ -47,8 +49,8 @@ export class AuthService {
   }
 
   async registration(userDto: CreateUserDto): Promise<{ message: string }> {
-    if (await this.userService.isUserBlocked(userDto.email)) {
-      throw new HttpException('Your account is blocked.', HttpStatus.FORBIDDEN);
+    if (await this.bannedUsersService.isUserBanned(userDto.email)) {
+      throw new HttpException('Account with email is banned!', HttpStatus.FORBIDDEN);
     }
     const candidate = await this.userService.getUsersByEmail(userDto.email);
     if (candidate.user) {
