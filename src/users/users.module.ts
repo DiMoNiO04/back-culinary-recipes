@@ -8,11 +8,17 @@ import { Role } from 'src/roles/roles.model';
 import { UserRoles } from 'src/roles/user-roles.model';
 import { AuthModule } from 'src/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { BlockedUser } from './users-banned.model';
 
 @Module({
   providers: [UsersService],
   controllers: [UsersController],
-  imports: [SequelizeModule.forFeature([User, Role, UserRoles]), RolesModule, forwardRef(() => AuthModule), JwtModule],
+  imports: [
+    SequelizeModule.forFeature([User, Role, UserRoles, BlockedUser]),
+    RolesModule,
+    forwardRef(() => AuthModule),
+    JwtModule,
+  ],
   exports: [UsersService, SequelizeModule],
 })
 export class UsersModule {}

@@ -35,6 +35,9 @@ export class AuthService {
   }
 
   async login(userDto: AuthUserDto): Promise<{ token: string; message: string }> {
+    if (await this.userService.isUserBlocked(userDto.email)) {
+      throw new UnauthorizedException({ message: 'Your account is blocked.' });
+    }
     const { user } = await this.validateUser(userDto);
     const token = await this.generateToken(user);
     return {
@@ -44,6 +47,9 @@ export class AuthService {
   }
 
   async registration(userDto: CreateUserDto): Promise<{ message: string }> {
+    if (await this.userService.isUserBlocked(userDto.email)) {
+      throw new HttpException('Your account is blocked.', HttpStatus.FORBIDDEN);
+    }
     const candidate = await this.userService.getUsersByEmail(userDto.email);
     if (candidate.user) {
       throw new HttpException('A user with this email exists', HttpStatus.BAD_REQUEST);

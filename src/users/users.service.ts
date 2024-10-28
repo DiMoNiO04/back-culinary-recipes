@@ -9,11 +9,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { Role } from 'src/roles/roles.model';
 import { Recipe } from 'src/recipes/recipes.model';
 import { Category } from 'src/categories/categories.model';
+import { BlockedUser } from './users-banned.model';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User) private userRepository: typeof User,
+    @InjectModel(BlockedUser) private blockedUserRepository: typeof BlockedUser,
     private roleService: RolesService
   ) {}
 
@@ -130,5 +132,28 @@ export class UsersService {
     const shorter = oldPassword.length > newPassword.length ? newPassword : oldPassword;
 
     return longer.includes(shorter);
+  }
+
+  async blockUser(userId: number, reason: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findByPk(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    await this.blockedUserRepository.create({ userId: user.id, email: user.email, reason });
+    return { message: 'User has been blocked successfully' };
+  }
+
+  async unblockUser(userId: number): Promise<{ message: string }> {
+    const user = await this.userRepository.findByPk(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    await this.blockedUserRepository.destroy({ where: { userId: user.id } });
+    return { message: 'User has been unblocked successfully' };
+  }
+
+  async isUserBlocked(email: string): Promise<boolean> {
+    const blockedUser = await this.blockedUserRepository.findOne({ where: { email } });
+    return !!blockedUser;
   }
 }
