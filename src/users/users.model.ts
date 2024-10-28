@@ -2,8 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { BelongsToMany, Column, DataType, HasMany, Model, Table, ForeignKey } from 'sequelize-typescript';
 import { BannedUsers } from 'src/bannedUsers/banned-users.model';
 import { Recipe } from 'src/recipes/recipes.model';
-import { Role } from 'src/roles/roles.model';
-import { UserRoles } from 'src/roles/user-roles.model';
+import { Role, UserRoles } from 'src/roles';
 
 interface UserCreationAttrs {
   firstName: string;

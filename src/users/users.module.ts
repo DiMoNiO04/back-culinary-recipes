@@ -1,13 +1,12 @@
-import { RolesModule } from './../roles/roles.module';
+import { SequelizeModule } from '@nestjs/sequelize';
 import { forwardRef, Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { RolesModule } from './../roles/roles.module';
+import { Role, UserRoles } from 'src/roles';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './users.model';
-import { Role } from 'src/roles/roles.model';
-import { UserRoles } from 'src/roles/user-roles.model';
 import { AuthModule } from 'src/auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   providers: [UsersService],

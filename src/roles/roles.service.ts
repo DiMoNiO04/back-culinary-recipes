@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateRoleDto } from './dto/create-role.dto';
-import { Role } from './roles.model';
-import { UserRoles } from './user-roles.model';
 import { User } from 'src/users/users.model';
-import { UpdateRoleDto } from './dto/update-role.dto';
+import { Role } from './roles.model';
+import { UserRoles, UpdateRoleDto, CreateRoleDto } from '.';
 
 @Injectable()
 export class RolesService {
@@ -49,10 +47,16 @@ export class RolesService {
   }
 
   async changeUserRole(userId: number, newRoleId: number) {
+    const roleExists = await Role.findByPk(newRoleId);
+    if (!roleExists) {
+      return { message: 'Role not found' };
+    }
+
     const userRole = await UserRoles.findOne({ where: { userId } });
     if (!userRole) {
       return { message: 'User role not found' };
     }
+
     await userRole.update({ roleId: newRoleId });
     return { message: 'User role successfully updated', userRole };
   }
