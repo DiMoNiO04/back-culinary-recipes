@@ -47,9 +47,13 @@ export class Recipe extends Model<Recipe, RecipeCreationAttrs> {
   @Column({ type: DataType.TEXT, allowNull: false })
   instructions: string;
 
+  @ApiProperty({ example: false, description: 'Is the recipe published or not' })
+  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
+  isPublished: boolean;
+
   @ForeignKey(() => Category)
   @ApiProperty({ example: '1', description: 'Category id' })
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER, allowNull: true })
   categoryId: number;
 
   @BelongsTo(() => Category)

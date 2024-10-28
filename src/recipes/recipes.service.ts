@@ -32,7 +32,7 @@ export class RecipesService {
 
   async createRecipe(dto: CreateRecipeDto, authorId: number): Promise<{ message: string; data: Recipe }> {
     await this.validateUser(authorId);
-    const recipe = await this.recipeRepository.create({ ...dto });
+    const recipe = await this.recipeRepository.create({ ...dto, isPublished: false });
     await recipe.$set('author', authorId);
     return { message: 'Recipe created successfully', data: recipe };
   }
@@ -77,5 +77,13 @@ export class RecipesService {
     const recipe = await this.validateRecipe(id);
     await recipe.destroy();
     return { message: `Recipe with id ${id} deleted successfully` };
+  }
+
+  async togglePublishRecipe(id: number): Promise<{ message: string; data: Recipe }> {
+    const recipe = await this.validateRecipe(id);
+    recipe.isPublished = !recipe.isPublished;
+    await recipe.save();
+    const action = recipe.isPublished ? 'published' : 'unpublished';
+    return { message: `Recipe with id ${id} ${action} successfully`, data: recipe };
   }
 }

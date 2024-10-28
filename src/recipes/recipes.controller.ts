@@ -64,4 +64,11 @@ export class RecipesController {
   remove(@Param('id') id: number) {
     return this.recipesService.deleteRecipe(id);
   }
+
+  @ApiOperation({ summary: 'Toggle publish state of recipe by ID' })
+  @ApiResponse({ status: 200 })
+  @Patch('/toggle-publish/:id')
+  async togglePublish(@Param('id') id: number) {
+    return await this.recipesService.togglePublishRecipe(id);
+  }
 }

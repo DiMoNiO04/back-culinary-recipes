@@ -1,15 +1,15 @@
-import { Table, Column, Model, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Table, Column, Model, ForeignKey, BelongsTo, DataType } from 'sequelize-typescript';
 import { User } from 'src/users/users.model';
 import { Recipe } from '../recipes/recipes.model';
 
 @Table({ tableName: 'favorites' })
 export class Favorite extends Model<Favorite> {
   @ForeignKey(() => User)
-  @Column
+  @Column({ type: DataType.INTEGER, allowNull: false })
   userId: number;
 
   @ForeignKey(() => Recipe)
-  @Column
+  @Column({ type: DataType.INTEGER, allowNull: false })
   recipeId: number;
 
   @BelongsTo(() => Recipe)
