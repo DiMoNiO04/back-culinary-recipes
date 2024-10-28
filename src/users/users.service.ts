@@ -35,7 +35,38 @@ export class UsersService {
   }
 
   async getAllUsers(): Promise<{ message: string; users: User[] }> {
-    const users = await this.userRepository.findAll({ include: { all: true } });
+    const users = await this.userRepository.findAll({
+      attributes: { exclude: ['password', 'updatedAt'] },
+      include: [
+        {
+          model: Role,
+          attributes: ['value', 'description'],
+          through: { attributes: [] },
+        },
+        {
+          model: Recipe,
+          attributes: [
+            'id',
+            'title',
+            'shortDescription',
+            'cookingTime',
+            'calories',
+            'image',
+            'ingredients',
+            'instructions',
+            'categoryId',
+            'createdAt',
+            'updatedAt',
+          ],
+          include: [
+            {
+              model: Category,
+              attributes: ['id', 'name', 'description', 'image'],
+            },
+          ],
+        },
+      ],
+    });
     return { message: 'Users retrieved successfully!', users };
   }
 
