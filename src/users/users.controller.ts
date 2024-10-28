@@ -25,6 +25,16 @@ export class UsersController {
     return user['id'];
   }
 
+  @ApiOperation({ summary: 'Create a user' })
+  @ApiResponse({ status: 201, type: User })
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard, JwtAuthGuard)
+  @Post()
+  async create(@Body() userDto: CreateUserDto) {
+    const { message, user } = await this.usersService.createUser(userDto);
+    return { message, data: user };
+  }
+
   @ApiOperation({ summary: 'Get personal user data' })
   @ApiResponse({ status: 200, type: User })
   @UseGuards(JwtAuthGuard)
@@ -48,26 +58,6 @@ export class UsersController {
     return { message, data: users };
   }
 
-  @ApiOperation({ summary: 'Create a user' })
-  @ApiResponse({ status: 201, type: User })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard, JwtAuthGuard)
-  @Post()
-  async create(@Body() userDto: CreateUserDto) {
-    const { message, user } = await this.usersService.createUser(userDto);
-    return { message, data: user };
-  }
-
-  @ApiOperation({ summary: 'Delete your own account' })
-  @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard)
-  @Delete('/self/delete')
-  async deleteSelf(@Req() request: Request) {
-    const userId = this.getUserIdFromRequest(request);
-    const { message } = await this.usersService.deleteUser(userId);
-    return { message };
-  }
-
   @ApiOperation({ summary: 'Change user password' })
   @ApiResponse({ status: 200 })
   @UseGuards(JwtAuthGuard)
@@ -85,6 +75,16 @@ export class UsersController {
   async updateNameAndSurname(@Req() request: Request, @Body() updateUserDto: UpdateUserDto) {
     const userId = this.getUserIdFromRequest(request);
     const { message } = await this.usersService.updateProfile(userId, updateUserDto);
+    return { message };
+  }
+
+  @ApiOperation({ summary: 'Delete your own account' })
+  @ApiResponse({ status: 200 })
+  @UseGuards(JwtAuthGuard)
+  @Delete('/self/delete')
+  async deleteSelf(@Req() request: Request) {
+    const userId = this.getUserIdFromRequest(request);
+    const { message } = await this.usersService.deleteUser(userId);
     return { message };
   }
 }

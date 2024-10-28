@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Delete, Patch, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Delete, Patch, UseGuards, Req, Query } from '@nestjs/common';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
@@ -50,6 +50,17 @@ export class RecipesController {
     return this.recipesService.getRecipesByUserId(userId);
   }
 
+  @ApiOperation({ summary: 'Search and sort recipes' })
+  @ApiResponse({ status: 200 })
+  @Get('/search-sort')
+  async searchAndSort(
+    @Query('title') title?: string,
+    @Query('orderBy') orderBy?: string,
+    @Query('order') order: 'ASC' | 'DESC' = 'ASC'
+  ) {
+    return await this.recipesService.searchAndSortRecipes(title, orderBy, order);
+  }
+
   @ApiOperation({ summary: 'Update recipe by ID' })
   @ApiResponse({ status: 200 })
   @Patch('/update/:id')
@@ -58,17 +69,17 @@ export class RecipesController {
     return await this.recipesService.updateRecipe(id, { ...updateRecipeDto, authorId });
   }
 
-  @ApiOperation({ summary: 'Delete recipe by ID' })
-  @ApiResponse({ status: 204 })
-  @Delete('/delete/:id')
-  remove(@Param('id') id: number) {
-    return this.recipesService.deleteRecipe(id);
-  }
-
   @ApiOperation({ summary: 'Toggle publish state of recipe by ID' })
   @ApiResponse({ status: 200 })
   @Patch('/toggle-publish/:id')
   async togglePublish(@Param('id') id: number) {
     return await this.recipesService.togglePublishRecipe(id);
+  }
+
+  @ApiOperation({ summary: 'Delete recipe by ID' })
+  @ApiResponse({ status: 204 })
+  @Delete('/delete/:id')
+  remove(@Param('id') id: number) {
+    return this.recipesService.deleteRecipe(id);
   }
 }

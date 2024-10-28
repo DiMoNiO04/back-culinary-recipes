@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Recipe } from './recipes.model';
@@ -87,5 +88,30 @@ export class RecipesService {
     await recipe.save();
     const action = recipe.isPublished ? 'published' : 'unpublished';
     return { message: `Recipe with id ${id} ${action} successfully`, data: recipe };
+  }
+
+  async searchAndSortRecipes(
+    title?: string,
+    orderBy?: string,
+    order: 'ASC' | 'DESC' = 'ASC'
+  ): Promise<{ message: string; data: Recipe[] }> {
+    const where: any = {};
+
+    if (title) {
+      where.title = {
+        [Op.iLike]: `%${title}%`,
+      };
+    }
+
+    const recipes = await this.recipeRepository.findAll({
+      where,
+      order: orderBy ? [[orderBy, order]] : undefined,
+      include: [
+        { model: Category, attributes: ['id', 'name', 'description', 'image'] },
+        { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
+      ],
+    });
+
+    return { message: 'Recipes retrieved successfully', data: recipes };
   }
 }

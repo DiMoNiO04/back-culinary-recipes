@@ -18,20 +18,20 @@ export class FavoritesController {
     return user['id'];
   }
 
-  @ApiOperation({ summary: 'Get favorite recipes' })
-  @ApiResponse({ status: 200 })
-  @Get()
-  async getFavorites(@Req() request: Request) {
-    const userId = this.getUserIdFromRequest(request);
-    return await this.favoritesService.getFavoriteRecipes(userId);
-  }
-
   @ApiOperation({ summary: 'Add recipe to favorites' })
   @ApiResponse({ status: 201 })
   @Post('/add/:recipeId')
   async addFavorite(@Param('recipeId') recipeId: number, @Req() request: Request) {
     const userId = this.getUserIdFromRequest(request);
     return await this.favoritesService.addFavoriteRecipe(userId, recipeId);
+  }
+
+  @ApiOperation({ summary: 'Get favorite recipes' })
+  @ApiResponse({ status: 200 })
+  @Get()
+  async getFavorites(@Req() request: Request) {
+    const userId = this.getUserIdFromRequest(request);
+    return await this.favoritesService.getFavoriteRecipes(userId);
   }
 
   @ApiOperation({ summary: 'Remove recipe from favorites' })
