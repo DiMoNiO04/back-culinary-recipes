@@ -11,6 +11,7 @@ interface RecipeCreationAttrs {
   instructions: string;
   categoryId: number;
   authorId: number;
+  isPublished?: boolean;
 }
 
 @Table({ tableName: 'recipes' })

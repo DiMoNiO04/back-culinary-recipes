@@ -25,25 +25,6 @@ export class FavoritesService {
     return recipe;
   }
 
-  async addFavoriteRecipe(userId: number, recipeId: number): Promise<{ message: string }> {
-    await this.validateUser(userId);
-    await this.validateRecipe(recipeId);
-
-    await Favorite.findOrCreate({
-      where: { userId, recipeId },
-    });
-
-    return { message: 'Recipe added to favorites successfully' };
-  }
-
-  async removeFavoriteRecipe(userId: number, recipeId: number): Promise<{ message: string }> {
-    await Favorite.destroy({
-      where: { userId, recipeId },
-    });
-
-    return { message: 'Recipe removed from favorites successfully' };
-  }
-
   async getFavoriteRecipes(userId: number): Promise<{ message: string; data: Recipe[] }> {
     await this.validateUser(userId);
 
@@ -72,5 +53,34 @@ export class FavoritesService {
       message: 'Favorite recipes retrieved successfully',
       data: favorites.map((favorite) => favorite.recipe),
     };
+  }
+
+  async addFavoriteRecipe(userId: number, recipeId: number): Promise<{ message: string }> {
+    await this.validateUser(userId);
+    await this.validateRecipe(recipeId);
+
+    await Favorite.findOrCreate({
+      where: { userId, recipeId },
+    });
+
+    return { message: 'Recipe added to favorites successfully' };
+  }
+
+  async removeFavoriteRecipe(userId: number, recipeId: number): Promise<{ message: string }> {
+    await Favorite.destroy({
+      where: { userId, recipeId },
+    });
+
+    return { message: 'Recipe removed from favorites successfully' };
+  }
+
+  async removeAllFavorites(userId: number): Promise<{ message: string }> {
+    await this.validateUser(userId);
+
+    await Favorite.destroy({
+      where: { userId },
+    });
+
+    return { message: 'All favorite recipes removed successfully' };
   }
 }

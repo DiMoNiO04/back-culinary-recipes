@@ -68,6 +68,8 @@ export class RecipesService {
     const recipe = await this.validateRecipe(id);
     if (dto.authorId) await this.validateUser(dto.authorId);
 
+    recipe.isPublished = false;
+
     Object.assign(recipe, dto);
     await recipe.save();
     return { message: `Recipe with id ${id} updated successfully`, data: recipe };
