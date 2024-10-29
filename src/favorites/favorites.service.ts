@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Favorite } from './favorites.model';
-import { Recipe } from '../recipes/recipes.model';
-import { User } from '../users/users.model';
-import { Category } from 'src/categories/categories.model';
+import { Recipe } from 'src/recipes';
+import { User } from 'src/users';
+import { Category } from 'src/categories';
 
 @Injectable()
 export class FavoritesService {

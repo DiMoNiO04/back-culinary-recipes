@@ -2,10 +2,9 @@ import { Op } from 'sequelize';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Recipe } from './recipes.model';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
-import { UpdateRecipeDto } from './dto/update-recipe.dto';
-import { Category } from '../categories/categories.model';
-import { User } from '../users/users.model';
+import { CreateRecipeDto, UpdateRecipeDto } from '.';
+import { Category } from 'src/categories';
+import { User } from 'src/users';
 
 @Injectable()
 export class RecipesService {

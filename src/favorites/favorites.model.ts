@@ -1,6 +1,6 @@
 import { Table, Column, Model, ForeignKey, BelongsTo, DataType } from 'sequelize-typescript';
-import { User } from 'src/users/users.model';
-import { Recipe } from '../recipes/recipes.model';
+import { User } from 'src/users';
+import { Recipe } from 'src/recipes';
 
 @Table({ tableName: 'favorites' })
 export class Favorite extends Model<Favorite> {

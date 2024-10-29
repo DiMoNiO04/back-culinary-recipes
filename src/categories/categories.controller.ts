@@ -1,10 +1,9 @@
 import { Body, Controller, Get, Post, Patch, Delete, Param } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { Category } from './categories.model';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateCategoryDto, UpdateCategoryDto } from '.';
+import { Category } from '.';
+import { CategoriesService } from './categories.service';
 import { Recipe } from 'src/recipes/recipes.model';
-import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @ApiTags('Categories')
 @Controller('categories')

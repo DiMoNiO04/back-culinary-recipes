@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
-import { FavoritesService } from './favorites.service';
+import { Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import { FavoritesService } from './favorites.service';
 
 @ApiTags('Favorites')
 @Controller('favorites')

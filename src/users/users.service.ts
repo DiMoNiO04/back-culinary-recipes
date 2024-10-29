@@ -1,13 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from './users.model';
-import { InjectModel } from '@nestjs/sequelize';
-import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
+import { User } from './users.model';
 import { Recipe } from 'src/recipes/recipes.model';
-import { Category } from 'src/categories/categories.model';
+import { Category } from 'src/categories';
 import { Role, RolesService } from 'src/roles';
+import { CreateUserDto, ChangePasswordDto, UpdateUserDto } from '.';
 
 @Injectable()
 export class UsersService {

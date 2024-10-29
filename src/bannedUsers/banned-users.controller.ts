@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Post, Param } from '@nestjs/common';
-import { BannedUsersService } from './banned-users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { BannedUsers } from './banned-users.model';
-import { UsersBannedDto } from './dto/users-banned.dto';
+import { BannedUsersService } from './banned-users.service';
+import { UsersBannedDto, BannedUsers } from '.';
 
 @ApiTags('Banned Users')
 @Controller('banned-users')

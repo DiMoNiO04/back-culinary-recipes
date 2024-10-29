@@ -1,10 +1,9 @@
 import { Body, Controller, Get, Param, Post, Delete, Patch, UseGuards, Req, Query } from '@nestjs/common';
-import { RecipesService } from './recipes.service';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
-import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { RecipesService } from './recipes.service';
+import { CreateRecipeDto, UpdateRecipeDto } from '.';
 
 @ApiTags('Recipes')
 @Controller('recipes')

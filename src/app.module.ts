@@ -1,18 +1,14 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { User } from './users/users.model';
-import { AuthModule } from './auth/auth.module';
-import { Category } from './categories/categories.model';
-import { Recipe } from './recipes/recipes.model';
-import { CategoriesModule } from './categories/categories.module';
-import { RecipesModule } from './recipes/recipes.module';
-import { FavoritesModule } from './favorites/favorites.module';
-import { Favorite } from './favorites/favorites.model';
-import { BannedUsersModule } from './bannedUsers/banned-users.module';
-import { BannedUsers } from './bannedUsers/banned-users.model';
+import { UsersModule } from './users/users.module';
+import { User } from './users';
 import { Role, RolesModule, UserRoles } from './roles';
+import { AuthModule } from './auth';
+import { CategoriesModule, Category } from './categories';
+import { Recipe, RecipesModule } from './recipes';
+import { Favorite, FavoritesModule } from './favorites';
+import { BannedUsers, BannedUsersModule } from './bannedUsers';
 
 @Module({
   controllers: [],
