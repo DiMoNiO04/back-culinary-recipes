@@ -1,19 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { BannedUsers } from './banned-users.model';
 import { User } from 'src/users/users.model';
+import { UsersService } from 'src/users';
 
 @Injectable()
 export class BannedUsersService {
   constructor(
     @InjectModel(BannedUsers) private bannedUsersRepository: typeof BannedUsers,
-    @InjectModel(User) private userRepository: typeof User
+    @InjectModel(User) private userRepository: typeof User,
+    private readonly userService: UsersService
   ) {}
 
-  async banUser(userId: number, reason: string): Promise<{ message: string }> {
+  async banUser(requesterId: number, userId: number, reason: string): Promise<{ message: string }> {
+    if (requesterId === userId) {
+      return { message: 'You cannot ban yourself!' };
+    }
+
+    const user = await this.userRepository.findByPk(userId);
+    if (!user) throw new NotFoundException('User not found');
+
+    const alreadyBanned = await this.bannedUsersRepository.findOne({ where: { userId } });
+    if (alreadyBanned) {
+      return { message: 'User is already banned!' };
+    }
+
     const bannedUser = await this.bannedUsersRepository.create({
       reason,
-      email: (await this.userRepository.findByPk(userId)).email,
+      email: user.email,
       userId,
     });
 
@@ -37,8 +51,19 @@ export class BannedUsersService {
     return !!bannedUser;
   }
 
-  async getAllBannedUsers(): Promise<{ message: string; bannedUsers: BannedUsers[] }> {
+  async getAllBannedUsers(): Promise<{ message: string; bannedUsers: any[] }> {
     const bannedUsers = await this.bannedUsersRepository.findAll();
-    return { message: 'Banned users retrieved successfully!', bannedUsers };
+
+    const bannedUsersWithDetails = await Promise.all(
+      bannedUsers.map(async (bannedUser) => {
+        const userData = await this.userService.getUserById(bannedUser.userId);
+        return {
+          ...bannedUser.toJSON(),
+          userDetails: userData,
+        };
+      })
+    );
+
+    return { message: 'Banned users retrieved successfully!', bannedUsers: bannedUsersWithDetails };
   }
 }

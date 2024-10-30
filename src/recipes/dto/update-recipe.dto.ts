@@ -27,7 +27,4 @@ export class UpdateRecipeDto {
 
   @ApiProperty({ example: '1', description: 'Author id', required: false })
   readonly authorId: number;
-
-  @ApiProperty({ example: true, description: 'Is the recipe published or not', required: false })
-  readonly isPublished: boolean;
 }

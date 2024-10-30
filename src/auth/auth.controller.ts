@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AuthService, AuthUserDto } from '.';
-import { CreateUserDto, User } from 'src/users';
+import { AuthService, AuthUserDto, RegUserDto } from '.';
+import { User } from 'src/users';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -19,7 +19,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Registration' })
   @ApiResponse({ status: 201 })
   @Post('/registration')
-  async registration(@Body() userDto: CreateUserDto) {
+  async registration(@Body() userDto: RegUserDto) {
     const result = await this.authService.registration(userDto);
     return { message: result.message };
   }

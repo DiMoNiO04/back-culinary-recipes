@@ -16,7 +16,6 @@ export class RecipesController {
   private getUserIdFromRequest(request: Request): number {
     const token = request.cookies?.Authentication || request.headers.authorization?.split(' ')[1];
     const user = this.jwtService.decode(token);
-    console.log(token);
     return user['id'];
   }
 

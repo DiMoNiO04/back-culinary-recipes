@@ -5,7 +5,8 @@ import { User } from './users.model';
 import { Recipe } from 'src/recipes/recipes.model';
 import { Category } from 'src/categories';
 import { Role, RolesService } from 'src/roles';
-import { CreateUserDto, ChangePasswordDto, UpdateUserDto } from '.';
+import { ChangePasswordDto, UpdateUserDto } from '.';
+import { RegUserDto } from 'src/auth';
 
 @Injectable()
 export class UsersService {
@@ -14,21 +15,63 @@ export class UsersService {
     private roleService: RolesService
   ) {}
 
-  async deleteUser(id: number): Promise<{ message: string }> {
-    const user = await this.userRepository.findByPk(id);
-    if (user) {
-      await user.destroy();
-      return { message: 'Account deleted!' };
-    }
-    return { message: 'Account not found, deletion failed!' };
+  private isSimilar(oldPassword: string, newPassword: string): boolean {
+    if (oldPassword === newPassword) return true;
+
+    const similarityThreshold = 0.9;
+    const longer = oldPassword.length > newPassword.length ? oldPassword : newPassword;
+    const shorter = oldPassword.length > newPassword.length ? newPassword : oldPassword;
+
+    return longer.includes(shorter);
   }
 
-  async createUser(dto: CreateUserDto): Promise<{ message: string; user: User }> {
+  async createUser(dto: RegUserDto): Promise<{ message: string; user: User }> {
     const user = await this.userRepository.create(dto);
     const { role } = await this.roleService.getRoleByValue('USER');
     await user.$set('roles', [role.id]);
     user.roles = [role];
     return { message: 'User created successfully!', user };
+  }
+
+  async getUserById(userId: number): Promise<{ message: string; user: User }> {
+    const user = await this.userRepository.findByPk(userId, {
+      attributes: { exclude: ['password'] },
+      include: [
+        {
+          model: Role,
+          attributes: ['id', 'value', 'description'],
+          through: { attributes: [] },
+        },
+        {
+          model: Recipe,
+          attributes: [
+            'id',
+            'title',
+            'shortDescription',
+            'cookingTime',
+            'calories',
+            'image',
+            'ingredients',
+            'instructions',
+            'categoryId',
+            'createdAt',
+            'updatedAt',
+          ],
+          include: [
+            {
+              model: Category,
+              attributes: ['id', 'name', 'description', 'image'],
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return { message: 'User retrieved successfully!', user };
   }
 
   async getAllUsers(): Promise<{ message: string; users: User[] }> {
@@ -87,9 +130,6 @@ export class UsersService {
 
   async changePassword(userId: number, changePasswordDto: ChangePasswordDto): Promise<{ message: string }> {
     const user = await this.userRepository.findByPk(userId);
-    console.log(changePasswordDto.confirmPassword);
-    console.log(changePasswordDto.currentPassword);
-    console.log(changePasswordDto.newPassword);
 
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -109,54 +149,12 @@ export class UsersService {
     return { message: 'Password changed successfully' };
   }
 
-  async getUserById(userId: number): Promise<{ message: string; user: User }> {
-    const user = await this.userRepository.findByPk(userId, {
-      attributes: { exclude: ['password'] },
-      include: [
-        {
-          model: Role,
-          attributes: ['id', 'value', 'description'],
-          through: { attributes: [] },
-        },
-        {
-          model: Recipe,
-          attributes: [
-            'id',
-            'title',
-            'shortDescription',
-            'cookingTime',
-            'calories',
-            'image',
-            'ingredients',
-            'instructions',
-            'categoryId',
-            'createdAt',
-            'updatedAt',
-          ],
-          include: [
-            {
-              model: Category,
-              attributes: ['id', 'name', 'description', 'image'],
-            },
-          ],
-        },
-      ],
-    });
-
-    if (!user) {
-      throw new UnauthorizedException('User not found');
+  async deleteUser(id: number): Promise<{ message: string }> {
+    const user = await this.userRepository.findByPk(id);
+    if (user) {
+      await user.destroy();
+      return { message: 'Account deleted!' };
     }
-
-    return { message: 'User retrieved successfully!', user };
-  }
-
-  private isSimilar(oldPassword: string, newPassword: string): boolean {
-    if (oldPassword === newPassword) return true;
-
-    const similarityThreshold = 0.9;
-    const longer = oldPassword.length > newPassword.length ? oldPassword : newPassword;
-    const shorter = oldPassword.length > newPassword.length ? newPassword : oldPassword;
-
-    return longer.includes(shorter);
+    return { message: 'Account not found, deletion failed!' };
   }
 }

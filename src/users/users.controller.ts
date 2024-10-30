@@ -25,10 +25,20 @@ export class UsersController {
   @ApiResponse({ status: 201, type: User })
   @Roles('ADMIN')
   @UseGuards(RolesGuard, JwtAuthGuard)
-  @Post()
+  @Post('/create')
   async create(@Body() userDto: CreateUserDto) {
     const { message, user } = await this.usersService.createUser(userDto);
     return { message, data: user };
+  }
+
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({ status: 200, type: [User] })
+  @Roles('ADMIN')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/get')
+  async getAll() {
+    const { message, users } = await this.usersService.getAllUsers();
+    return { message, data: users };
   }
 
   @ApiOperation({ summary: 'Get personal user data' })
@@ -43,15 +53,6 @@ export class UsersController {
       message,
       data: user,
     };
-  }
-
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, type: [User] })
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async getAll() {
-    const { message, users } = await this.usersService.getAllUsers();
-    return { message, data: users };
   }
 
   @ApiOperation({ summary: 'Change user password' })

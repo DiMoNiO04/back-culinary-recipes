@@ -5,9 +5,10 @@ import { Recipe } from 'src/recipes';
 import { UsersModule } from 'src/users';
 import { Favorite, FavoritesController } from '.';
 import { FavoritesService } from './favorites.service';
+import { AuthModule } from 'src/auth';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Favorite, Recipe]), UsersModule, JwtModule],
+  imports: [SequelizeModule.forFeature([Favorite, Recipe]), AuthModule, UsersModule, JwtModule],
   controllers: [FavoritesController],
   providers: [FavoritesService],
 })

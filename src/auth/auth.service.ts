@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { AuthUserDto } from '.';
+import { AuthUserDto, RegUserDto } from '.';
 import { BannedUsersService } from 'src/bannedUsers';
-import { CreateUserDto, User, UsersService } from 'src/users';
+import { User, UsersService } from 'src/users';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  private async validateUser(userDto: CreateUserDto | AuthUserDto): Promise<{ message: string; user: User }> {
+  private async validateUser(userDto: RegUserDto | AuthUserDto): Promise<{ message: string; user: User }> {
     const { user } = await this.userService.getUsersByEmail(userDto.email);
 
     if (!user) {
@@ -46,7 +46,7 @@ export class AuthService {
     };
   }
 
-  async registration(userDto: CreateUserDto): Promise<{ message: string }> {
+  async registration(userDto: RegUserDto): Promise<{ message: string }> {
     if (await this.bannedUsersService.isUserBanned(userDto.email)) {
       throw new HttpException('Account with email is banned!', HttpStatus.FORBIDDEN);
     }

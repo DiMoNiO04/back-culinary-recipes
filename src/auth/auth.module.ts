@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { BannedUsersModule } from 'src/bannedUsers';
 import { UsersModule } from 'src/users';
+import { CategoriesModule } from 'src/categories';
 
 @Module({
   providers: [AuthService],

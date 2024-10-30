@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Post, Patch, Delete, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Delete, Param, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateCategoryDto, UpdateCategoryDto } from '.';
 import { Category } from '.';
 import { CategoriesService } from './categories.service';
 import { Recipe } from 'src/recipes/recipes.model';
+import { Roles } from 'src/roles';
+import { JwtAuthGuard, RolesGuard } from 'src/guards';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -12,6 +14,8 @@ export class CategoriesController {
 
   @ApiOperation({ summary: 'Create category' })
   @ApiResponse({ status: 201, type: Category })
+  @Roles('MODERATOR')
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Post('/create')
   async create(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.createCategory(createCategoryDto);
@@ -40,6 +44,8 @@ export class CategoriesController {
 
   @ApiOperation({ summary: 'Update category by ID' })
   @ApiResponse({ status: 200, type: Category })
+  @Roles('MODERATOR')
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Patch('/update/:id')
   async update(@Param('id') id: number, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoriesService.updateCategory(id, updateCategoryDto);
@@ -47,6 +53,8 @@ export class CategoriesController {
 
   @ApiOperation({ summary: 'Delete category by ID' })
   @ApiResponse({ status: 204 })
+  @Roles('MODERATOR')
+  @UseGuards(RolesGuard)
   @Delete('/delete/:id')
   delete(@Param('id') id: number) {
     return this.categoriesService.deleteCategory(id);
