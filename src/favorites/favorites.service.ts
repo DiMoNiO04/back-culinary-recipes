@@ -67,6 +67,9 @@ export class FavoritesService {
   }
 
   async removeFavoriteRecipe(userId: number, recipeId: number): Promise<{ message: string }> {
+    await this.validateUser(userId);
+    await this.validateRecipe(recipeId);
+
     await Favorite.destroy({
       where: { userId, recipeId },
     });

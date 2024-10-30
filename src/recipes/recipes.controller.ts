@@ -4,6 +4,8 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { RecipesService } from './recipes.service';
 import { CreateRecipeDto, UpdateRecipeDto } from '.';
+import { Roles } from 'src/roles';
+import { JwtAuthGuard, RolesGuard } from 'src/guards';
 
 @ApiTags('Recipes')
 @Controller('recipes')
@@ -21,6 +23,8 @@ export class RecipesController {
 
   @ApiOperation({ summary: 'Create recipe' })
   @ApiResponse({ status: 201 })
+  @Roles('USER')
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Post('/create')
   async create(@Body() createRecipeDto: CreateRecipeDto, @Req() request: Request) {
     const authorId = this.getUserIdFromRequest(request);
@@ -43,6 +47,8 @@ export class RecipesController {
 
   @ApiOperation({ summary: 'Get recipes by user ID' })
   @ApiResponse({ status: 200 })
+  @Roles('MODERATOR')
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Get('/user/:userId')
   getByUserId(@Param('userId') userId: number) {
     return this.recipesService.getRecipesByUserId(userId);
@@ -61,6 +67,8 @@ export class RecipesController {
 
   @ApiOperation({ summary: 'Update recipe by ID' })
   @ApiResponse({ status: 200 })
+  @Roles('USER')
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Patch('/update/:id')
   async update(@Param('id') id: number, @Body() updateRecipeDto: UpdateRecipeDto, @Req() request: Request) {
     const authorId = this.getUserIdFromRequest(request);
@@ -69,6 +77,8 @@ export class RecipesController {
 
   @ApiOperation({ summary: 'Toggle publish state of recipe by ID' })
   @ApiResponse({ status: 200 })
+  @Roles('MODERATOR')
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Patch('/toggle-publish/:id')
   async togglePublish(@Param('id') id: number) {
     return await this.recipesService.togglePublishRecipe(id);
@@ -76,8 +86,11 @@ export class RecipesController {
 
   @ApiOperation({ summary: 'Delete recipe by ID' })
   @ApiResponse({ status: 204 })
+  @Roles('USER')
+  @UseGuards(RolesGuard, JwtAuthGuard)
   @Delete('/delete/:id')
-  remove(@Param('id') id: number) {
-    return this.recipesService.deleteRecipe(id);
+  async remove(@Param('id') id: number, @Req() request: Request) {
+    const authorId = this.getUserIdFromRequest(request);
+    return await this.recipesService.deleteRecipe(id, authorId);
   }
 }

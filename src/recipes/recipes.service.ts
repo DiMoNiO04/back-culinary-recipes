@@ -1,5 +1,5 @@
 import { Op } from 'sequelize';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Recipe } from './recipes.model';
 import { CreateRecipeDto, UpdateRecipeDto } from '.';
@@ -39,17 +39,27 @@ export class RecipesService {
 
   async getAllRecipes(): Promise<{ message: string; data: Recipe[] }> {
     const recipes = await this.recipeRepository.findAll({
+      where: { isPublished: true },
       include: [
         { model: Category, attributes: ['id', 'name', 'description', 'image'] },
         { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
       ],
     });
-    return { message: 'All recipes retrieved successfully', data: recipes };
+    return { message: 'All published recipes retrieved successfully', data: recipes };
   }
 
   async getRecipeById(id: number): Promise<{ message: string; data: Recipe }> {
-    const recipe = await this.validateRecipe(id);
-    return { message: `Recipe with id ${id} retrieved successfully`, data: recipe };
+    const recipe = await this.recipeRepository.findOne({
+      where: { id, isPublished: true },
+      include: [
+        { model: Category, attributes: ['id', 'name', 'description', 'image'] },
+        { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
+      ],
+    });
+
+    if (!recipe) throw new NotFoundException(`Published recipe with id ${id} not found`);
+
+    return { message: `Published recipe with id ${id} retrieved successfully`, data: recipe };
   }
 
   async getRecipesByUserId(userId: number): Promise<{ message: string; data: Recipe[] }> {
@@ -66,17 +76,25 @@ export class RecipesService {
 
   async updateRecipe(id: number, dto: UpdateRecipeDto): Promise<{ message: string; data: Recipe }> {
     const recipe = await this.validateRecipe(id);
-    if (dto.authorId) await this.validateUser(dto.authorId);
+
+    if (recipe.authorId !== dto.authorId) {
+      throw new UnauthorizedException('You can only update your own recipes');
+    }
 
     recipe.isPublished = false;
-
     Object.assign(recipe, dto);
     await recipe.save();
+
     return { message: `Recipe with id ${id} updated successfully`, data: recipe };
   }
 
-  async deleteRecipe(id: number): Promise<{ message: string }> {
+  async deleteRecipe(id: number, authorId: number): Promise<{ message: string }> {
     const recipe = await this.validateRecipe(id);
+
+    if (recipe.authorId !== authorId) {
+      throw new UnauthorizedException('You can only delete your own recipes');
+    }
+
     await recipe.destroy();
     return { message: `Recipe with id ${id} deleted successfully` };
   }
