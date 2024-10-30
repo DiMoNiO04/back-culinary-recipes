@@ -38,6 +38,13 @@ export class RecipesController {
     return this.recipesService.getAllRecipes();
   }
 
+  @ApiOperation({ summary: 'Get all published recipes' })
+  @ApiResponse({ status: 200 })
+  @Get('/getPublished')
+  getPublished() {
+    return this.recipesService.getPublishedRecipes();
+  }
+
   @ApiOperation({ summary: 'Get recipe by ID' })
   @ApiResponse({ status: 200 })
   @Get('/getOne/:id')

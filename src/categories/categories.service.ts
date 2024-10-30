@@ -41,9 +41,9 @@ export class CategoriesService {
   }
 
   async createCategory(dto: CreateCategoryDto): Promise<{ category: Category; message: string }> {
-    // if (dto.image && !this.validateBase64Image(dto.image)) {
-    //   throw new HttpException('Invalid image format', HttpStatus.BAD_REQUEST);
-    // }
+    if (dto.image && !this.validateBase64Image(dto.image)) {
+      throw new HttpException('Invalid image format', HttpStatus.BAD_REQUEST);
+    }
     const category = await this.categoryRepository.create({ ...dto });
     return { category, message: 'Category created successfully' };
   }
