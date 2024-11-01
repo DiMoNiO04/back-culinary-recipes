@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as bodyParser from 'body-parser';
 
 async function start() {
   const PORT = process.env.PORT || 5000;
@@ -10,6 +11,9 @@ async function start() {
     origin: process.env.CORS_URL,
     credentials: true,
   });
+
+  app.use(bodyParser.json({ limit: '10mb' })); // Увеличьте до нужного размера
+  app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
   const config = new DocumentBuilder()
     .setTitle('CULINARY RECIPES')

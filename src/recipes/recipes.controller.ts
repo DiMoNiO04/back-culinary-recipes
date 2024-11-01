@@ -45,6 +45,13 @@ export class RecipesController {
     return this.recipesService.getPublishedRecipes();
   }
 
+  @ApiOperation({ summary: 'Get published recipes by category name' })
+  @ApiResponse({ status: 200 })
+  @Get('/getPublishedRecipesByCategory/:categoryName')
+  async getPublishedByCategory(@Param('categoryName') categoryName: string) {
+    return await this.recipesService.getPublishedRecipesByCategoryName(categoryName);
+  }
+
   @ApiOperation({ summary: 'Get recipe by ID' })
   @ApiResponse({ status: 200 })
   @Get('/getOne/:id')
@@ -61,15 +68,11 @@ export class RecipesController {
     return this.recipesService.getRecipesByUserId(userId);
   }
 
-  @ApiOperation({ summary: 'Search and sort recipes' })
+  @ApiOperation({ summary: 'Search recipes' })
   @ApiResponse({ status: 200 })
-  @Get('/search-sort')
-  async searchAndSort(
-    @Query('title') title?: string,
-    @Query('orderBy') orderBy?: string,
-    @Query('order') order: 'ASC' | 'DESC' = 'ASC'
-  ) {
-    return await this.recipesService.searchAndSortRecipes(title, orderBy, order);
+  @Get('/search')
+  async search(@Query('title') title?: string) {
+    return await this.recipesService.searchRecipes(title);
   }
 
   @ApiOperation({ summary: 'Update recipe by ID' })

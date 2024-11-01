@@ -67,6 +67,30 @@ export class RecipesService {
     return { message: 'All published recipes retrieved successfully', data: recipes };
   }
 
+  async getPublishedRecipesByCategoryName(categoryName: string): Promise<{ message: string; data: Recipe[] }> {
+    const recipes = await this.recipeRepository.findAll({
+      where: { isPublished: true },
+      include: [
+        {
+          model: Category,
+          where: { name: { [Op.iLike]: categoryName } },
+          attributes: ['id', 'name', 'description', 'image'],
+        },
+        {
+          model: User,
+          attributes: ['id', 'firstName', 'lastName', 'email'],
+        },
+      ],
+    });
+
+    let message: string = `Published recipes for category '${categoryName}' retrieved successfully`;
+    if (recipes.length === 0) {
+      message = `No published recipes found for category`;
+    }
+
+    return { message: message, data: recipes };
+  }
+
   async getRecipeById(id: number): Promise<{ message: string; data: Recipe }> {
     const recipe = await this.recipeRepository.findOne({
       where: { id, isPublished: true },
@@ -130,11 +154,7 @@ export class RecipesService {
     return { message: `Recipe with id ${id} ${action} successfully`, data: recipe };
   }
 
-  async searchAndSortRecipes(
-    title?: string,
-    orderBy?: string,
-    order: 'ASC' | 'DESC' = 'ASC'
-  ): Promise<{ message: string; data: Recipe[] }> {
+  async searchRecipes(title?: string): Promise<{ message: string; data: Recipe[] }> {
     const where: any = {};
 
     if (title) {
@@ -145,7 +165,6 @@ export class RecipesService {
 
     const recipes = await this.recipeRepository.findAll({
       where,
-      order: orderBy ? [[orderBy, order]] : undefined,
       include: [
         { model: Category, attributes: ['id', 'name', 'description', 'image'] },
         { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },

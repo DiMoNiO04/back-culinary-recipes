@@ -2,8 +2,7 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { InjectModel } from '@nestjs/sequelize';
 import { Category } from './categories.model';
 import { CreateCategoryDto, UpdateCategoryDto } from '.';
-import { Recipe } from 'src/recipes/recipes.model';
-import { User } from 'src/users/users.model';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class CategoriesService {
@@ -13,87 +12,78 @@ export class CategoriesService {
     return /^data:image\/\w+;base64,/.test(image);
   }
 
-  private async findCategoryWithRecipes(id: number): Promise<Category> {
-    const category = await this.categoryRepository.findByPk(id, {
-      include: [
-        {
-          model: Recipe,
-          attributes: [
-            'id',
-            'title',
-            'shortDescription',
-            'cookingTime',
-            'calories',
-            'image',
-            'ingredients',
-            'instructions',
-            'createdAt',
-          ],
-          include: [
-            { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
-            { model: Category, attributes: ['id', 'name', 'description', 'image'] },
-          ],
-        },
-      ],
-    });
-    if (!category) throw new NotFoundException(`Category with ID ${id} not found`);
-    return category;
-  }
-
   async createCategory(dto: CreateCategoryDto): Promise<{ category: Category; message: string }> {
     if (dto.image && !this.validateBase64Image(dto.image)) {
       throw new HttpException('Invalid image format', HttpStatus.BAD_REQUEST);
     }
+
+    const existingCategory = await this.categoryRepository.findOne({ where: { name: dto.name } });
+    if (existingCategory) {
+      throw new HttpException('Category name must be unique', HttpStatus.BAD_REQUEST);
+    }
+
     const category = await this.categoryRepository.create({ ...dto });
     return { category, message: 'Category created successfully' };
   }
 
-  async getAllCategories(): Promise<{ categories: Category[]; message: string }> {
+  async getAllCategories(): Promise<{ data: Category[]; message: string }> {
     const categories = await this.categoryRepository.findAll({
-      include: [
-        {
-          model: Recipe,
-          attributes: [
-            'id',
-            'title',
-            'shortDescription',
-            'cookingTime',
-            'calories',
-            'image',
-            'ingredients',
-            'instructions',
-            'createdAt',
-          ],
-          include: [{ model: User, attributes: ['id', 'firstName', 'lastName', 'email'] }],
-        },
-      ],
+      order: [['name', 'ASC']],
     });
-    return { categories, message: 'All categories retrieved successfully' };
+    return { data: categories, message: 'All categories retrieved successfully' };
   }
 
-  async getCategoryById(id: number): Promise<{ category: Category; message: string }> {
-    const category = await this.findCategoryWithRecipes(id);
-    return { category, message: 'Category retrieved successfully' };
+  async getCategoryById(name: string): Promise<{ data: Category; message: string }> {
+    const category = await this.categoryRepository.findOne({
+      where: {
+        name: {
+          [Op.iLike]: name,
+        },
+      },
+    });
+
+    if (!category) throw new NotFoundException(`Category with name "${name}" not found`);
+    return { data: category, message: 'Category retrieved successfully' };
   }
 
-  async updateCategory(id: number, dto: UpdateCategoryDto): Promise<{ category: Category; message: string }> {
+  async updateCategory(name: string, dto: UpdateCategoryDto): Promise<{ category: Category; message: string }> {
     if (dto.image && !this.validateBase64Image(dto.image)) {
       throw new HttpException('Invalid image format', HttpStatus.BAD_REQUEST);
     }
-    const category = await this.findCategoryWithRecipes(id);
+
+    const category = await this.categoryRepository.findOne({
+      where: {
+        name: {
+          [Op.iLike]: name,
+        },
+      },
+    });
+
+    if (!category) throw new NotFoundException(`Category with name "${name}" not found`);
+
+    if (dto.name && dto.name !== category.name) {
+      const existingCategory = await this.categoryRepository.findOne({ where: { name: dto.name } });
+      if (existingCategory) {
+        throw new HttpException('Category name must be unique', HttpStatus.BAD_REQUEST);
+      }
+    }
+
     await category.update({ ...dto });
     return { category, message: 'Category updated successfully' };
   }
 
-  async deleteCategory(id: number): Promise<{ message: string }> {
-    const category = await this.findCategoryWithRecipes(id);
+  async deleteCategory(name: string): Promise<{ message: string }> {
+    const category = await this.categoryRepository.findOne({
+      where: {
+        name: {
+          [Op.iLike]: name,
+        },
+      },
+    });
+
+    if (!category) throw new NotFoundException(`Category with name "${name}" not found`);
+
     await category.destroy();
     return { message: 'Category deleted successfully' };
-  }
-
-  async getCategoryRecipes(id: number): Promise<{ recipes: Recipe[]; message: string }> {
-    const category = await this.findCategoryWithRecipes(id);
-    const recipes = category.recipes || [];
-    return { recipes, message: 'Recipes retrieved successfully' };
   }
 }
