@@ -43,7 +43,7 @@ export class RecipesService {
 
     const recipe = await this.recipeRepository.create({ ...dto, isPublished: false });
     await recipe.$set('author', authorId);
-    return { message: 'Recipe created successfully', data: recipe };
+    return { message: 'Recipe created successfully. It is currently under moderation', data: recipe };
   }
 
   async getAllRecipes(): Promise<{ message: string; data: Recipe[] }> {
@@ -93,7 +93,7 @@ export class RecipesService {
 
   async getRecipeById(id: number): Promise<{ message: string; data: Recipe }> {
     const recipe = await this.recipeRepository.findOne({
-      where: { id, isPublished: true },
+      where: { id },
       include: [
         { model: Category, attributes: ['id', 'name', 'description', 'image'] },
         { model: User, attributes: ['id', 'firstName', 'lastName', 'email'] },
@@ -132,7 +132,7 @@ export class RecipesService {
     Object.assign(recipe, dto);
     await recipe.save();
 
-    return { message: `Recipe with id ${id} updated successfully`, data: recipe };
+    return { message: `Recipe updated successfully`, data: recipe };
   }
 
   async deleteRecipe(id: number, authorId: number): Promise<{ message: string }> {
@@ -143,7 +143,7 @@ export class RecipesService {
     }
 
     await recipe.destroy();
-    return { message: `Recipe with id ${id} deleted successfully` };
+    return { message: `Recipe '${recipe.title}' deleted successfully` };
   }
 
   async togglePublishRecipe(id: number): Promise<{ message: string; data: Recipe }> {
@@ -151,7 +151,7 @@ export class RecipesService {
     recipe.isPublished = !recipe.isPublished;
     await recipe.save();
     const action = recipe.isPublished ? 'published' : 'unpublished';
-    return { message: `Recipe with id ${id} ${action} successfully`, data: recipe };
+    return { message: `Recipe ${recipe.title} ${action} successfully`, data: recipe };
   }
 
   async searchRecipes(title?: string): Promise<{ message: string; data: Recipe[] }> {

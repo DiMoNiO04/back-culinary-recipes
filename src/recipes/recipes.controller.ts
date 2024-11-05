@@ -75,6 +75,16 @@ export class RecipesController {
     return await this.recipesService.searchRecipes(title);
   }
 
+  @ApiOperation({ summary: 'Get all recipes for the authenticated user' })
+  @ApiResponse({ status: 200 })
+  @Roles('USER')
+  @UseGuards(RolesGuard, JwtAuthGuard)
+  @Get('/myRecipes')
+  async getMyRecipes(@Req() request: Request) {
+    const authorId = this.getUserIdFromRequest(request);
+    return await this.recipesService.getRecipesByUserId(authorId);
+  }
+
   @ApiOperation({ summary: 'Update recipe by ID' })
   @ApiResponse({ status: 200 })
   @Roles('USER')

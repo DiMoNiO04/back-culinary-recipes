@@ -49,8 +49,10 @@ export class FavoritesService {
       ],
     });
 
+    const message = favorites.length > 0 ? 'Favorite recipes retrieved successfully' : 'No favorite recipes found';
+
     return {
-      message: 'Favorite recipes retrieved successfully',
+      message,
       data: favorites.map((favorite) => favorite.recipe),
     };
   }
