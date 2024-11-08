@@ -7,6 +7,7 @@ import { Category } from 'src/categories';
 import { Role, RolesService } from 'src/roles';
 import { ChangePasswordDto, UpdateUserDto } from '.';
 import { RegUserDto } from 'src/auth';
+import { BannedUsers } from 'src/bannedUsers';
 
 @Injectable()
 export class UsersService {
@@ -27,9 +28,9 @@ export class UsersService {
 
   async createUser(dto: RegUserDto): Promise<{ message: string; user: User }> {
     const user = await this.userRepository.create(dto);
-    const { role } = await this.roleService.getRoleByValue('USER');
-    await user.$set('roles', [role.id]);
-    user.roles = [role];
+    const { data } = await this.roleService.getRoleByValue('USER');
+    await user.$set('roles', [data.id]);
+    user.roles = [data];
     return { message: 'User created successfully!', user };
   }
 
@@ -82,6 +83,10 @@ export class UsersService {
           model: Role,
           attributes: ['value', 'description'],
           through: { attributes: [] },
+        },
+        {
+          model: BannedUsers,
+          attributes: ['email', 'reason'],
         },
         {
           model: Recipe,

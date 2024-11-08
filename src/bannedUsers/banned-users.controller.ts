@@ -29,13 +29,4 @@ export class BannedUsersController {
   async unbanUser(@Param('userId') userId: number) {
     return await this.bannedUsersService.unbanUser(userId);
   }
-
-  @ApiOperation({ summary: 'Get all banned users' })
-  @ApiResponse({ status: 200, type: [BannedUsers] })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard, JwtAuthGuard)
-  @Get('/all')
-  async getAllBannedUsers() {
-    return await this.bannedUsersService.getAllBannedUsers();
-  }
 }

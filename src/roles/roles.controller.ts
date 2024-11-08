@@ -28,9 +28,18 @@ export class RolesController {
     return this.roleService.getAllRoles();
   }
 
+  @ApiOperation({ summary: 'Getting role' })
+  @ApiResponse({ status: 200, type: [Role] })
+  @Roles('ADMIN', 'MODERATOR')
+  @UseGuards(RolesGuard, JwtAuthGuard)
+  @Get('/getRole/:value')
+  getRole(@Param('value') value: string) {
+    return this.roleService.getRoleByValue(value);
+  }
+
   @ApiOperation({ summary: 'Getting users by role value' })
   @ApiResponse({ status: 200, type: [User] })
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'MODERATOR')
   @UseGuards(RolesGuard, JwtAuthGuard)
   @Get('/users/:roleValue')
   getUsersByRole(@Param('roleValue') roleValue: string) {

@@ -34,13 +34,18 @@ export class AuthService {
     throw new UnauthorizedException({ message: 'Incorrect email or password!' });
   }
 
-  async login(userDto: AuthUserDto): Promise<{ token: string; message: string }> {
+  async login(userDto: AuthUserDto): Promise<{ token: string; message: string; role: string }> {
     if (await this.bannedUsersService.isUserBanned(userDto.email)) {
       throw new UnauthorizedException({ message: 'Your account is banned!' });
     }
+
     const { user } = await this.validateUser(userDto);
     const token = await this.generateToken(user);
+
+    const payload = this.jwtService.decode(token);
+
     return {
+      role: payload.roles[0].value,
       token,
       message: 'You are logged in!',
     };

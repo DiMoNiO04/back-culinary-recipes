@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BelongsToMany, Column, DataType, HasMany, Model, Table, ForeignKey } from 'sequelize-typescript';
+import { BelongsToMany, Column, DataType, HasMany, Model, Table, ForeignKey, HasOne } from 'sequelize-typescript';
 import { BannedUsers } from 'src/bannedUsers/banned-users.model';
 import { Recipe } from 'src/recipes/recipes.model';
 import { Role, UserRoles } from 'src/roles';
@@ -40,6 +40,9 @@ export class User extends Model<User, UserCreationAttrs> {
   @ForeignKey(() => BannedUsers)
   @Column({ type: DataType.INTEGER, allowNull: true })
   bannedId: number;
+
+  @HasOne(() => BannedUsers)
+  bannedUser: BannedUsers[];
 
   @BelongsToMany(() => Role, () => UserRoles)
   roles: Role[];

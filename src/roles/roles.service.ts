@@ -18,7 +18,7 @@ export class RolesService {
     if (!role) {
       return { message: 'Role not found' };
     }
-    return { message: 'Role successfully retrieved', role };
+    return { message: 'Role successfully retrieved', data: role };
   }
 
   async updateRole(id: number, dto: UpdateRoleDto) {
@@ -27,12 +27,12 @@ export class RolesService {
       return { message: 'Role not found' };
     }
     await role.update(dto);
-    return { message: 'Role successfully updated', role };
+    return { message: 'Role successfully updated', data: role };
   }
 
   async getAllRoles() {
     const roles = await this.roleRepository.findAll();
-    return { message: 'Roles successfully retrieved', roles };
+    return { message: 'Roles successfully retrieved', data: roles };
   }
 
   async getUsersByRole(roleValue: string) {
@@ -43,7 +43,7 @@ export class RolesService {
     if (!role) {
       return { message: 'Role not found' };
     }
-    return { message: 'Users with specified role retrieved', users: role.users };
+    return { message: 'Users with specified role retrieved', data: role.users };
   }
 
   async changeUserRole(userId: number, newRoleId: number) {
@@ -58,7 +58,7 @@ export class RolesService {
     }
 
     await userRole.update({ roleId: newRoleId });
-    return { message: 'User role successfully updated', userRole };
+    return { message: 'User role successfully updated', data: userRole };
   }
 
   async deleteRole(id: number) {

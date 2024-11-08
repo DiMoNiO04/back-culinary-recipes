@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
+import { BelongsTo, Column, DataType, ForeignKey, Model, Table } from 'sequelize-typescript';
 import { User } from '../users/users.model';
 
 @Table({ tableName: 'banned_users', updatedAt: false })
@@ -15,4 +15,7 @@ export class BannedUsers extends Model<BannedUsers> {
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER })
   userId: number;
+
+  @BelongsTo(() => User)
+  user: User;
 }

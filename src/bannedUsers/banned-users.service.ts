@@ -50,20 +50,4 @@ export class BannedUsersService {
     const bannedUser = await this.bannedUsersRepository.findOne({ where: { email } });
     return !!bannedUser;
   }
-
-  async getAllBannedUsers(): Promise<{ message: string; bannedUsers: any[] }> {
-    const bannedUsers = await this.bannedUsersRepository.findAll();
-
-    const bannedUsersWithDetails = await Promise.all(
-      bannedUsers.map(async (bannedUser) => {
-        const userData = await this.userService.getUserById(bannedUser.userId);
-        return {
-          ...bannedUser.toJSON(),
-          userDetails: userData,
-        };
-      })
-    );
-
-    return { message: 'Banned users retrieved successfully!', bannedUsers: bannedUsersWithDetails };
-  }
 }

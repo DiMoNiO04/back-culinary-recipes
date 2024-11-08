@@ -13,7 +13,7 @@ export class AuthController {
   @Post('/login')
   async login(@Body() userDto: AuthUserDto) {
     const result = await this.authService.login(userDto);
-    return { message: result.message, token: result.token };
+    return { message: result.message, token: result.token, role: result.role };
   }
 
   @ApiOperation({ summary: 'Registration' })
