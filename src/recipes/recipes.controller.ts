@@ -106,7 +106,7 @@ export class RecipesController {
 
   @ApiOperation({ summary: 'Delete recipe by ID' })
   @ApiResponse({ status: 204 })
-  @Roles('USER')
+  @Roles('USER', 'MODERATOR')
   @UseGuards(RolesGuard, JwtAuthGuard)
   @Delete('/delete/:id')
   async remove(@Param('id') id: number, @Req() request: Request) {

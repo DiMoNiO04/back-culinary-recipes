@@ -138,10 +138,6 @@ export class RecipesService {
   async deleteRecipe(id: number, authorId: number): Promise<{ message: string }> {
     const recipe = await this.validateRecipe(id);
 
-    if (recipe.authorId !== authorId) {
-      throw new UnauthorizedException('You can only delete your own recipes');
-    }
-
     await recipe.destroy();
     return { message: `Recipe '${recipe.title}' deleted successfully` };
   }
