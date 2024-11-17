@@ -8,11 +8,11 @@ async function start() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: process.env.CORS_URL,
+    origin: [process.env.FRONT_CORS_URL, process.env.APP_CORS_URL, process.env.EXPO_CORS_URL],
     credentials: true,
   });
 
-  app.use(bodyParser.json({ limit: '10mb' })); // Увеличьте до нужного размера
+  app.use(bodyParser.json({ limit: '10mb' }));
   app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
   const config = new DocumentBuilder()
